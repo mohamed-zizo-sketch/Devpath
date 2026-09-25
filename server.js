@@ -104,8 +104,9 @@ loadMockDb();
 
 // Database Initialization (Auto-detects PostgreSQL or MySQL with automatic tables migration)
 async function initDatabase() {
-  const pgConnUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+  const pgConnUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.STORAGE_URL || process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL_NON_POOLING;
   const isPgConfigured = pgConnUrl || process.env.PGHOST || process.env.POSTGRES_HOST;
+
 
   // 1. Try PostgreSQL first (Vercel Postgres, Neon, Supabase, Railway)
   if (isPgConfigured) {
