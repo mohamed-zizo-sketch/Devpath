@@ -877,9 +877,16 @@ app.get('*', (req, res, next) => {
 });
 
 // Start Server
-app.listen(PORT, async () => {
-  console.log(`\n==================================================`);
-  console.log(`🚀 DEVPATH Server running at http://localhost:${PORT}`);
-  console.log(`==================================================`);
-  await initDatabase();
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`\n==================================================`);
+    console.log(`🚀 DEVPATH Server running at http://localhost:${PORT}`);
+    console.log(`==================================================`);
+    await initDatabase();
+  });
+} else {
+  initDatabase().catch(console.error);
+}
+
+module.exports = app;
+
