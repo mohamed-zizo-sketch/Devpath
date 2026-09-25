@@ -5,6 +5,8 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql2/promise');
+const { Pool: PgPool } = require('pg');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -17,13 +19,45 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-// Global DB pool reference
-let dbPool = null;
-let useMockDb = false;
+// Database engine & pool references
+let dbType = 'mock'; // 'postgres', 'mysql', or 'mock'
+let pgPool = null;
+let mysqlPool = null;
+let useMockDb = true;
 
-const fs = require('fs');
+// Unified database query adapter (works seamlessly on PostgreSQL, MySQL, and Mock)
+const dbPool = {
+  async query(sql, params = []) {
+    if (dbType === 'postgres' && pgPool) {
+      let pgSql = sql;
+      if (pgSql.includes('ON DUPLICATE KEY UPDATE completed = VALUES(completed)')) {
+        pgSql = pgSql.replace(
+          'ON DUPLICATE KEY UPDATE completed = VALUES(completed)',
+          'ON CONFLICT (user_id, track_id, phase_number) DO UPDATE SET completed = EXCLUDED.completed'
+        );
+      }
+      const isInsert = pgSql.trim().toUpperCase().startsWith('INSERT');
+      if (isInsert && !pgSql.toUpperCase().includes('RETURNING')) {
+        pgSql += ' RETURNING id';
+      }
+      let paramIdx = 1;
+      pgSql = pgSql.replace(/\?/g, () => `$${paramIdx++}`);
 
-// Mock in-memory storage fallback if MySQL server is not active
+      const result = await pgPool.query(pgSql, params);
+      const rows = result.rows || [];
+      if (isInsert) {
+        rows.insertId = rows.length > 0 && rows[0].id ? rows[0].id : null;
+      }
+      return [rows, result.fields];
+    } else if (dbType === 'mysql' && mysqlPool) {
+      return await mysqlPool.query(sql, params);
+    } else {
+      throw new Error('Database not connected');
+    }
+  }
+};
+
+// Mock in-memory storage fallback if cloud database is not active
 const mockDb = {
   users: [
     {
@@ -68,103 +102,170 @@ function saveMockDb() {
 
 loadMockDb();
 
-// Database Initialization
+// Database Initialization (Auto-detects PostgreSQL or MySQL with automatic tables migration)
 async function initDatabase() {
-  const dbConfig = {
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    port: parseInt(process.env.DB_PORT || '3306', 10)
-  };
+  const pgConnUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+  const isPgConfigured = pgConnUrl || process.env.PGHOST || process.env.POSTGRES_HOST;
 
-  try {
-    // 1. Connect without database to ensure database exists
-    const connection = await mysql.createConnection(dbConfig);
-    const dbName = process.env.DB_NAME || 'devpath_db';
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
-    await connection.end();
-
-    // 2. Connect pool with database
-    dbPool = mysql.createPool({
-      ...dbConfig,
-      database: dbName,
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0
-    });
-
-    // 3. Create tables if they do not exist
-    await dbPool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        full_name VARCHAR(100) NOT NULL,
-        email VARCHAR(150) NOT NULL UNIQUE,
-        password_hash VARCHAR(255) NOT NULL,
-        role ENUM('user', 'admin') DEFAULT 'user',
-        is_verified BOOLEAN DEFAULT FALSE,
-        verification_token VARCHAR(255) DEFAULT NULL,
-        verification_code VARCHAR(10) DEFAULT NULL,
-        reset_token VARCHAR(255) DEFAULT NULL,
-        reset_expires TIMESTAMP NULL DEFAULT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-      );
-    `);
-
-    // Ensure columns exist if table was already created
+  // 1. Try PostgreSQL first (Vercel Postgres, Neon, Supabase, Railway)
+  if (isPgConfigured) {
     try {
-      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE;`);
-      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_token VARCHAR(255) DEFAULT NULL;`);
-      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_code VARCHAR(10) DEFAULT NULL;`);
-      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255) DEFAULT NULL;`);
-      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expires TIMESTAMP NULL DEFAULT NULL;`);
-    } catch (e) {
-      // In case MySQL version doesn't support IF NOT EXISTS in ALTER TABLE
+      console.log('🔄 Attempting PostgreSQL connection...');
+      const poolConfig = pgConnUrl
+        ? { connectionString: pgConnUrl, ssl: { rejectUnauthorized: false } }
+        : {
+            host: process.env.PGHOST || process.env.POSTGRES_HOST || 'localhost',
+            user: process.env.PGUSER || process.env.POSTGRES_USER || 'postgres',
+            password: process.env.PGPASSWORD || process.env.POSTGRES_PASSWORD || '',
+            database: process.env.PGDATABASE || process.env.POSTGRES_DATABASE || 'devpath_db',
+            port: parseInt(process.env.PGPORT || process.env.POSTGRES_PORT || '5432', 10),
+            ssl: { rejectUnauthorized: false }
+          };
+
+      pgPool = new PgPool(poolConfig);
+      await pgPool.query('SELECT NOW()');
+
+      // Create PostgreSQL tables
+      await pgPool.query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          full_name VARCHAR(100) NOT NULL,
+          email VARCHAR(150) NOT NULL UNIQUE,
+          password_hash VARCHAR(255) NOT NULL,
+          role VARCHAR(20) DEFAULT 'user',
+          is_verified BOOLEAN DEFAULT FALSE,
+          verification_token VARCHAR(255) DEFAULT NULL,
+          verification_code VARCHAR(10) DEFAULT NULL,
+          reset_token VARCHAR(255) DEFAULT NULL,
+          reset_expires TIMESTAMP NULL DEFAULT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS user_progress (
+          id SERIAL PRIMARY KEY,
+          user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          track_id VARCHAR(50) NOT NULL,
+          phase_number INT NOT NULL,
+          completed BOOLEAN DEFAULT TRUE,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          CONSTRAINT unique_user_track_phase UNIQUE (user_id, track_id, phase_number)
+        );
+
+        CREATE TABLE IF NOT EXISTS contact_messages (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(100) NOT NULL,
+          email VARCHAR(150) NOT NULL,
+          subject VARCHAR(200) DEFAULT 'General Inquiry',
+          message TEXT NOT NULL,
+          is_read BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      // Seed admin user in PostgreSQL
+      const adminEmail = (process.env.ADMIN_EMAIL || 'sci.mohamedabdelaziz01652@alexu.edu.eg').toLowerCase();
+      const adminCheck = await pgPool.query('SELECT id FROM users WHERE email = $1', [adminEmail]);
+      if (adminCheck.rows.length === 0) {
+        const adminHash = await bcrypt.hash('admin123', 10);
+        await pgPool.query(
+          'INSERT INTO users (full_name, email, password_hash, role, is_verified) VALUES ($1, $2, $3, $4, $5)',
+          ['Admin Mohamed', adminEmail, adminHash, 'admin', true]
+        );
+        console.log(`[Database] Seeded initial admin account in PostgreSQL: ${adminEmail}`);
+      }
+
+      dbType = 'postgres';
+      useMockDb = false;
+      console.log('✅ Connected to PostgreSQL Database successfully!');
+      return;
+    } catch (pgErr) {
+      console.warn('⚠️ PostgreSQL connection failed:', pgErr.message);
     }
-
-    await dbPool.query(`
-      CREATE TABLE IF NOT EXISTS user_progress (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        track_id VARCHAR(50) NOT NULL,
-        phase_number INT NOT NULL,
-        completed BOOLEAN DEFAULT TRUE,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        UNIQUE KEY unique_user_track_phase (user_id, track_id, phase_number),
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-      );
-    `);
-
-    await dbPool.query(`
-      CREATE TABLE IF NOT EXISTS contact_messages (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(150) NOT NULL,
-        subject VARCHAR(200) DEFAULT 'General Inquiry',
-        message TEXT NOT NULL,
-        is_read BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
-    // 4. Seed admin user if not exists
-    const adminEmail = (process.env.ADMIN_EMAIL || 'sci.mohamedabdelaziz01652@alexu.edu.eg').toLowerCase();
-    const [existingAdmin] = await dbPool.query('SELECT id FROM users WHERE email = ?', [adminEmail]);
-    if (existingAdmin.length === 0) {
-      const adminHash = await bcrypt.hash('admin123', 10);
-      await dbPool.query(
-        'INSERT INTO users (full_name, email, password_hash, role, is_verified) VALUES (?, ?, ?, ?, ?)',
-        ['Admin Mohamed', adminEmail, adminHash, 'admin', 1]
-      );
-      console.log(`[Database] Seeded initial admin account: ${adminEmail}`);
-    }
-
-    console.log('✅ Connected to MySQL Database successfully!');
-  } catch (error) {
-    console.warn('⚠️ MySQL connection could not be established:', error.message);
-    console.warn('ℹ️ Falling back to in-memory store so the app remains fully testable without stopping.');
-    useMockDb = true;
   }
+
+  // 2. Try MySQL next
+  if (process.env.DB_HOST) {
+    try {
+      const dbConfig = {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || '',
+        port: parseInt(process.env.DB_PORT || '3306', 10)
+      };
+
+      const connection = await mysql.createConnection(dbConfig);
+      const dbName = process.env.DB_NAME || 'devpath_db';
+      await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+      await connection.end();
+
+      mysqlPool = mysql.createPool({
+        ...dbConfig,
+        database: dbName,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0
+      });
+
+      await mysqlPool.query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          full_name VARCHAR(100) NOT NULL,
+          email VARCHAR(150) NOT NULL UNIQUE,
+          password_hash VARCHAR(255) NOT NULL,
+          role ENUM('user', 'admin') DEFAULT 'user',
+          is_verified BOOLEAN DEFAULT FALSE,
+          verification_token VARCHAR(255) DEFAULT NULL,
+          verification_code VARCHAR(10) DEFAULT NULL,
+          reset_token VARCHAR(255) DEFAULT NULL,
+          reset_expires TIMESTAMP NULL DEFAULT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS user_progress (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          user_id INT NOT NULL,
+          track_id VARCHAR(50) NOT NULL,
+          phase_number INT NOT NULL,
+          completed BOOLEAN DEFAULT TRUE,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          UNIQUE KEY unique_user_track_phase (user_id, track_id, phase_number),
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+        CREATE TABLE IF NOT EXISTS contact_messages (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(100) NOT NULL,
+          email VARCHAR(150) NOT NULL,
+          subject VARCHAR(200) DEFAULT 'General Inquiry',
+          message TEXT NOT NULL,
+          is_read BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      const adminEmail = (process.env.ADMIN_EMAIL || 'sci.mohamedabdelaziz01652@alexu.edu.eg').toLowerCase();
+      const [existingAdmin] = await mysqlPool.query('SELECT id FROM users WHERE email = ?', [adminEmail]);
+      if (existingAdmin.length === 0) {
+        const adminHash = await bcrypt.hash('admin123', 10);
+        await mysqlPool.query(
+          'INSERT INTO users (full_name, email, password_hash, role, is_verified) VALUES (?, ?, ?, ?, ?)',
+          ['Admin Mohamed', adminEmail, adminHash, 'admin', 1]
+        );
+      }
+
+      dbType = 'mysql';
+      useMockDb = false;
+      console.log('✅ Connected to MySQL Database successfully!');
+      return;
+    } catch (mysqlErr) {
+      console.warn('⚠️ MySQL connection failed:', mysqlErr.message);
+    }
+  }
+
+  // 3. Fallback to mock storage
+  dbType = 'mock';
+  useMockDb = true;
+  console.log('ℹ️ Running in persistent file/mock storage mode.');
 }
 
 // Authentication Middlewares
