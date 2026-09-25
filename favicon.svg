@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050530" />
+      <stop offset="50%" stop-color="#0a0a4a" />
+      <stop offset="100%" stop-color="#030325" />
+    </linearGradient>
+
+    <!-- Border Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff" />
+      <stop offset="50%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#00e5ff" />
+    </linearGradient>
+
+    <!-- Path / Arrow Gradient -->
+    <linearGradient id="pathGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00e5ff" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect x="24" y="24" width="464" height="464" rx="128" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="16" />
+
+  <!-- Background Subtle Grid Node -->
+  <circle cx="256" cy="256" r="160" fill="none" stroke="rgba(0, 229, 255, 0.08)" stroke-width="4" stroke-dasharray="8 8" />
+
+  <!-- Code Chevron Left: < -->
+  <path d="M 180 180 L 110 256 L 180 332" fill="none" stroke="#00e5ff" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+
+  <!-- Code Chevron Right: > -->
+  <path d="M 332 180 L 402 256 L 332 332" fill="none" stroke="#a855f7" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+
+  <!-- Forward Career Path Arrow: Slanted Slash & Compass / Ascending Node -->
+  <path d="M 220 350 L 292 162" fill="none" stroke="url(#pathGrad)" stroke-width="36" stroke-linecap="round" filter="url(#glow)" />
+
+  <!-- Bright Core Star at the Peak -->
+  <circle cx="292" cy="162" r="16" fill="#fbbf24" filter="url(#glow)" />
+  <circle cx="292" cy="162" r="8" fill="#ffffff" />
+
+  <!-- Base Node -->
+  <circle cx="220" cy="350" r="14" fill="#00e5ff" />
+</svg>

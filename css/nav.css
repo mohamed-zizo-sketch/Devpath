@@ -37,13 +37,26 @@
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 10px;
   transition: transform var(--transition-fast);
 }
 
+.nav-logo .logo-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.45));
+  transition: transform 0.3s ease;
+}
+
 .nav-logo:hover {
-  transform: scale(1.05);
+  transform: scale(1.04);
   color: inherit;
+}
+
+.nav-logo:hover .logo-img {
+  transform: rotate(6deg) scale(1.1);
 }
 
 .logo-dev {

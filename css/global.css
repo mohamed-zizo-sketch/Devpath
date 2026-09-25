@@ -412,3 +412,29 @@ p {
     grid-template-columns: 1fr;
   }
 }
+
+/* --- Universal Brand Logo Styles --- */
+.nav-logo,
+.back-home .nav-logo {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-decoration: none;
+}
+
+.logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.45));
+  transition: transform 0.3s ease;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.nav-logo:hover .logo-img,
+.back-home:hover .logo-img {
+  transform: rotate(6deg) scale(1.1);
+}
+
