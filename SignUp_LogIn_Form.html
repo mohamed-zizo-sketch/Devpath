@@ -460,6 +460,7 @@
         loginSuccess.style.display = 'block';
 
         Auth.setSession(data.token, data.user);
+        Auth.saveLocalAccount({ email, is_verified: data.user.is_verified });
 
         setTimeout(() => {
           if (data.user.role === 'admin') {
@@ -469,6 +470,27 @@
           }
         }, 1000);
       } catch (err) {
+        // Fallback: Check if this user was registered locally on this device
+        const localAcc = Auth.getLocalAccount(email);
+        if (localAcc && localAcc.password === password) {
+          try {
+            // Re-sync with backend in case serverless container recycled
+            const syncRes = await fetch('/api/auth/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ full_name: localAcc.full_name || 'Learner', email, password })
+            });
+            const syncData = await syncRes.json();
+            if (syncRes.ok && syncData.token) {
+              Auth.setSession(syncData.token, syncData.user);
+              loginSuccess.textContent = `Welcome back, ${syncData.user.full_name}! Redirecting...`;
+              loginSuccess.style.display = 'block';
+              setTimeout(() => { window.location.href = './index.html'; }, 800);
+              return;
+            }
+          } catch(syncErr) {}
+        }
+
         loginError.textContent = err.message;
         loginError.style.display = 'block';
         loginSubmitBtn.disabled = false;
@@ -521,6 +543,7 @@
         registerSuccess.style.display = 'block';
 
         Auth.setSession(data.token, data.user);
+        Auth.saveLocalAccount({ full_name, email, password, is_verified: false });
 
         setTimeout(() => {
           if (data.verificationUrl) {

@@ -21,6 +21,8 @@ app.use(express.static(path.join(__dirname)));
 let dbPool = null;
 let useMockDb = false;
 
+const fs = require('fs');
+
 // Mock in-memory storage fallback if MySQL server is not active
 const mockDb = {
   users: [
@@ -41,6 +43,30 @@ const mockDb = {
   user_progress: [],
   contact_messages: []
 };
+
+// Auto-persist mock database to writable disk location (/tmp on Vercel/Linux, root on Windows)
+const MOCK_DB_FILE = path.join(process.platform === 'win32' ? __dirname : '/tmp', 'devpath_mock_db.json');
+
+function loadMockDb() {
+  try {
+    if (fs.existsSync(MOCK_DB_FILE)) {
+      const data = JSON.parse(fs.readFileSync(MOCK_DB_FILE, 'utf8'));
+      if (data && Array.isArray(data.users) && data.users.length > 0) {
+        mockDb.users = data.users;
+        mockDb.user_progress = data.user_progress || [];
+        mockDb.contact_messages = data.contact_messages || [];
+      }
+    }
+  } catch (e) {}
+}
+
+function saveMockDb() {
+  try {
+    fs.writeFileSync(MOCK_DB_FILE, JSON.stringify(mockDb, null, 2), 'utf8');
+  } catch (e) {}
+}
+
+loadMockDb();
 
 // Database Initialization
 async function initDatabase() {
@@ -256,6 +282,7 @@ app.post('/api/auth/register', async (req, res) => {
         created_at: new Date()
       };
       mockDb.users.push(newUser);
+      saveMockDb();
 
       const token = jwt.sign({ id: newUser.id, email: cleanEmail, role, full_name: full_name.trim(), is_verified: isVerified }, JWT_SECRET, { expiresIn: '7d' });
 
@@ -376,6 +403,7 @@ app.post('/api/auth/verify-email', async (req, res) => {
       user.is_verified = true;
       user.verification_token = null;
       user.verification_code = null;
+      saveMockDb();
     }
 
     console.log(`✅ [Email Verified Successfully] User ID: ${user.id}, Email: ${user.email}`);
@@ -575,6 +603,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
       user.password_hash = newHash;
       user.reset_token = null;
       user.reset_expires = null;
+      saveMockDb();
     }
 
     res.json({

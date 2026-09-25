@@ -24,6 +24,30 @@ const Auth = {
     this.updateNavbar();
   },
 
+  saveLocalAccount(account) {
+    try {
+      const accounts = JSON.parse(localStorage.getItem('devpath_local_accounts') || '[]');
+      const cleanEmail = account.email.trim().toLowerCase();
+      const existing = accounts.findIndex(a => a.email.toLowerCase() === cleanEmail);
+      if (existing >= 0) {
+        accounts[existing] = { ...accounts[existing], ...account, email: cleanEmail };
+      } else {
+        accounts.push({ ...account, email: cleanEmail });
+      }
+      localStorage.setItem('devpath_local_accounts', JSON.stringify(accounts));
+    } catch (e) {}
+  },
+
+  getLocalAccount(email) {
+    try {
+      const accounts = JSON.parse(localStorage.getItem('devpath_local_accounts') || '[]');
+      const cleanEmail = email.trim().toLowerCase();
+      return accounts.find(a => a.email.toLowerCase() === cleanEmail);
+    } catch (e) {
+      return null;
+    }
+  },
+
   logout() {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
