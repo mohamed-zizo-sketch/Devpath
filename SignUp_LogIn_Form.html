@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEVPATH — Authentication & Password Reset</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #03032d 0%, #0a0a3a 30%, #111155 60%, #0d1a6a 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+      padding: var(--space-lg);
+    }
+
+    .back-home {
+      position: fixed;
+      top: var(--space-lg);
+      left: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: color var(--transition-fast);
+      z-index: 10;
+    }
+
+    .back-home:hover {
+      color: var(--accent-cyan);
+    }
+
+    .back-home .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 850px;
+      min-height: 560px;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-lg);
+      animation: scaleIn 0.5s var(--ease-out) both;
+    }
+
+    .auth-forms {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .auth-forms.view-register {
+      transform: translateX(-33.333%);
+    }
+
+    .auth-forms.view-forgot {
+      transform: translateX(-66.666%);
+    }
+
+    .auth-form {
+      width: 33.333%;
+      padding: var(--space-3xl) var(--space-2xl);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .auth-form h2 {
+      font-size: 1.8rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .auth-form .auth-subtitle {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    .error-box {
+      display: none;
+      background: rgba(248, 113, 113, 0.15);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: #f87171;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .success-box {
+      display: none;
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: #34d399;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .input-group {
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 44px 14px 44px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      transition: all var(--transition-fast);
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+    }
+
+    .input-group input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .input-group .input-icon {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    .toggle-pass-btn {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: color var(--transition-fast);
+    }
+
+    .toggle-pass-btn:hover {
+      color: var(--accent-cyan);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+      font-size: 0.8rem;
+    }
+
+    .form-options label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .form-options a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .form-options a:hover {
+      color: var(--accent-yellow);
+    }
+
+    .auth-form .btn {
+      width: 100%;
+      padding: 16px;
+      font-size: 1rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .auth-switch {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .auth-switch a {
+      color: var(--accent-cyan);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .auth-switch a:hover {
+      color: var(--accent-yellow);
+    }
+
+    .password-strength {
+      margin-top: 6px;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .strength-bar {
+      height: 100%;
+      width: 0;
+      border-radius: 2px;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    .strength-bar.weak { width: 33%; background: var(--accent-red); }
+    .strength-bar.medium { width: 66%; background: var(--accent-yellow); }
+    .strength-bar.strong { width: 100%; background: var(--accent-green); }
+
+    @media (max-width: 600px) {
+      .auth-form {
+        padding: var(--space-xl) var(--space-lg);
+      }
+    }
+  </style>
+</head>
+<body class="page-enter">
+
+  <a href="./index.html" class="back-home">
+    <i class="fa-solid fa-arrow-left"></i>
+    <span class="nav-logo"><span class="logo-dev">DEV</span><span class="logo-path">PATH</span></span>
+  </a>
+
+  <div class="auth-container">
+    <div class="auth-forms" id="authForms">
+
+      <!-- Panel 1: Login Form -->
+      <form class="auth-form" id="loginForm" onsubmit="return false;">
+        <h2>Welcome Back</h2>
+        <p class="auth-subtitle">Sign in to save your learning progress across all 12 tracks</p>
+
+        <div id="loginError" class="error-box"></div>
+        <div id="loginSuccess" class="success-box"></div>
+
+        <div class="input-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="Enter your email" required>
+          <i class="fa-solid fa-envelope input-icon"></i>
+        </div>
+
+        <div class="input-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required>
+          <i class="fa-solid fa-lock input-icon"></i>
+          <button type="button" class="toggle-pass-btn" data-target="loginPassword"><i class="fa-regular fa-eye"></i></button>
+        </div>
+
+        <div class="form-options">
+          <label><input type="checkbox" id="rememberMe" checked> Remember me</label>
+          <a id="showForgot">Forgot password?</a>
+        </div>
+
+        <button class="btn btn-primary" type="submit" id="loginSubmitBtn">Sign In</button>
+
+        <p class="auth-switch">
+          Don't have an account? <a id="showRegister">Sign Up</a>
+        </p>
+      </form>
+
+      <!-- Panel 2: Register Form -->
+      <form class="auth-form" id="registerForm" onsubmit="return false;">
+        <h2>Create Account</h2>
+        <p class="auth-subtitle">Start your developer journey and track completed milestones</p>
+
+        <div id="registerError" class="error-box"></div>
+        <div id="registerSuccess" class="success-box"></div>
+
+        <div class="input-group">
+          <label for="regName">Full Name</label>
+          <input type="text" id="regName" placeholder="Enter your full name" required>
+          <i class="fa-solid fa-user input-icon"></i>
+        </div>
+
+        <div class="input-group">
+          <label for="regEmail">Email Address</label>
+          <input type="email" id="regEmail" placeholder="Enter your email" required>
+          <i class="fa-solid fa-envelope input-icon"></i>
+        </div>
+
+        <div class="input-group">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" placeholder="Create password (min 6 characters)" required>
+          <i class="fa-solid fa-lock input-icon"></i>
+          <button type="button" class="toggle-pass-btn" data-target="regPassword"><i class="fa-regular fa-eye"></i></button>
+          <div class="password-strength">
+            <div class="strength-bar" id="strengthBar"></div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="regConfirmPassword">Confirm Password</label>
+          <input type="password" id="regConfirmPassword" placeholder="Re-enter your password" required>
+          <i class="fa-solid fa-shield-halved input-icon"></i>
+          <button type="button" class="toggle-pass-btn" data-target="regConfirmPassword"><i class="fa-regular fa-eye"></i></button>
+        </div>
+
+        <button class="btn btn-primary" type="submit" id="regSubmitBtn">Create Account</button>
+
+        <p class="auth-switch">
+          Already have an account? <a id="showLoginFromReg">Sign In</a>
+        </p>
+      </form>
+
+      <!-- Panel 3: Forgot Password Form -->
+      <form class="auth-form" id="forgotForm" onsubmit="return false;">
+        <h2>Reset Password</h2>
+        <p class="auth-subtitle">Enter your registered email to receive password reset instructions</p>
+
+        <div id="forgotError" class="error-box"></div>
+        <div id="forgotSuccess" class="success-box"></div>
+
+        <div class="input-group">
+          <label for="forgotEmail">Account Email</label>
+          <input type="email" id="forgotEmail" placeholder="Enter your registered email" required>
+          <i class="fa-solid fa-envelope input-icon"></i>
+        </div>
+
+        <div id="directResetContainer" style="display: none; margin-bottom: var(--space-md); text-align: center;">
+          <p style="font-size: 0.85rem; color: var(--accent-yellow); margin-bottom: 8px;">Development Link Generated:</p>
+          <a id="directResetLink" href="#" class="btn btn-outline" style="border-color: var(--accent-cyan); color: var(--accent-cyan); padding: 10px 18px; font-size: 0.88rem; display: inline-block;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Password Reset Page
+          </a>
+        </div>
+
+        <button class="btn btn-primary" type="submit" id="forgotSubmitBtn">Send Reset Instructions</button>
+
+        <p class="auth-switch">
+          Remembered your password? <a id="showLoginFromForgot">Back to Sign In</a>
+        </p>
+      </form>
+
+    </div>
+  </div>
+
+  <script src="./js/auth.js"></script>
+  <script>
+    const authForms = document.getElementById('authForms');
+    const showRegister = document.getElementById('showRegister');
+    const showLoginFromReg = document.getElementById('showLoginFromReg');
+    const showForgot = document.getElementById('showForgot');
+    const showLoginFromForgot = document.getElementById('showLoginFromForgot');
+
+    // Panel switching
+    showRegister.addEventListener('click', () => {
+      authForms.className = 'auth-forms view-register';
+    });
+
+    showLoginFromReg.addEventListener('click', () => {
+      authForms.className = 'auth-forms';
+    });
+
+    showForgot.addEventListener('click', () => {
+      authForms.className = 'auth-forms view-forgot';
+    });
+
+    showLoginFromForgot.addEventListener('click', () => {
+      authForms.className = 'auth-forms';
+    });
+
+    // Eye toggle for password visibility
+    document.querySelectorAll('.toggle-pass-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+        } else {
+          input.type = 'password';
+          btn.innerHTML = '<i class="fa-regular fa-eye"></i>';
+        }
+      });
+    });
+
+    // Password strength
+    const regPassword = document.getElementById('regPassword');
+    const strengthBar = document.getElementById('strengthBar');
+
+    regPassword.addEventListener('input', (e) => {
+      const val = e.target.value;
+      strengthBar.className = 'strength-bar';
+      if (!val) { strengthBar.style.width = '0'; return; }
+
+      let strength = 0;
+      if (val.length >= 6) strength++;
+      if (val.length >= 10) strength++;
+      if (/[A-Z]/.test(val) && /[0-9]/.test(val)) strength++;
+      if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+      if (strength <= 1) strengthBar.classList.add('weak');
+      else if (strength <= 2) strengthBar.classList.add('medium');
+      else strengthBar.classList.add('strong');
+    });
+
+    // 1. Login Handler
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const loginSuccess = document.getElementById('loginSuccess');
+    const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+      loginSuccess.style.display = 'none';
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      loginSubmitBtn.disabled = true;
+      loginSubmitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing In...';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+
+        loginSuccess.textContent = `Welcome back, ${data.user.full_name}! Redirecting...`;
+        loginSuccess.style.display = 'block';
+
+        Auth.setSession(data.token, data.user);
+
+        setTimeout(() => {
+          if (data.user.role === 'admin') {
+            window.location.href = './admin.html';
+          } else {
+            window.location.href = './index.html';
+          }
+        }, 1000);
+      } catch (err) {
+        loginError.textContent = err.message;
+        loginError.style.display = 'block';
+        loginSubmitBtn.disabled = false;
+        loginSubmitBtn.innerHTML = 'Sign In';
+      }
+    });
+
+    // 2. Register Handler
+    const registerForm = document.getElementById('registerForm');
+    const registerError = document.getElementById('registerError');
+    const registerSuccess = document.getElementById('registerSuccess');
+    const regSubmitBtn = document.getElementById('regSubmitBtn');
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      registerError.style.display = 'none';
+      registerSuccess.style.display = 'none';
+
+      const full_name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const confirmPass = document.getElementById('regConfirmPassword').value;
+
+      if (password !== confirmPass) {
+        registerError.textContent = 'Passwords do not match.';
+        registerError.style.display = 'block';
+        return;
+      }
+
+      if (password.length < 6) {
+        registerError.textContent = 'Password must be at least 6 characters.';
+        registerError.style.display = 'block';
+        return;
+      }
+
+      regSubmitBtn.disabled = true;
+      regSubmitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ full_name, email, password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Registration failed');
+
+        registerSuccess.textContent = 'Account created! Redirecting to email verification...';
+        registerSuccess.style.display = 'block';
+
+        Auth.setSession(data.token, data.user);
+
+        setTimeout(() => {
+          if (data.verificationUrl) {
+            window.location.href = data.verificationUrl;
+          } else {
+            window.location.href = `./verify-email.html?email=${encodeURIComponent(email)}`;
+          }
+        }, 1200);
+      } catch (err) {
+        registerError.textContent = err.message;
+        registerError.style.display = 'block';
+        regSubmitBtn.disabled = false;
+        regSubmitBtn.innerHTML = 'Create Account';
+      }
+    });
+
+    // 3. Forgot Password Handler
+    const forgotForm = document.getElementById('forgotForm');
+    const forgotError = document.getElementById('forgotError');
+    const forgotSuccess = document.getElementById('forgotSuccess');
+    const forgotSubmitBtn = document.getElementById('forgotSubmitBtn');
+    const directResetContainer = document.getElementById('directResetContainer');
+    const directResetLink = document.getElementById('directResetLink');
+
+    forgotForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      forgotError.style.display = 'none';
+      forgotSuccess.style.display = 'none';
+      directResetContainer.style.display = 'none';
+
+      const email = document.getElementById('forgotEmail').value.trim();
+      forgotSubmitBtn.disabled = true;
+      forgotSubmitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating Link...';
+
+      try {
+        const res = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Request failed');
+
+        forgotSuccess.textContent = data.message;
+        forgotSuccess.style.display = 'block';
+
+        if (data.resetUrl) {
+          directResetLink.href = data.resetUrl;
+          directResetContainer.style.display = 'block';
+        }
+      } catch (err) {
+        forgotError.textContent = err.message;
+        forgotError.style.display = 'block';
+      } finally {
+        forgotSubmitBtn.disabled = false;
+        forgotSubmitBtn.innerHTML = 'Send Reset Instructions';
+      }
+    });
+  </script>
+</body>
+</html>

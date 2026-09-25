@@ -1,0 +1,284 @@
+/* ============================================
+   DEVPATH — Roadmap Page Styles
+   ============================================ */
+
+/* --- Roadmap Hero --- */
+.roadmap-hero {
+  padding: 140px 0 var(--space-3xl);
+  text-align: center;
+}
+
+.roadmap-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: var(--space-md);
+}
+
+.roadmap-hero p {
+  max-width: 600px;
+  margin: 0 auto var(--space-lg);
+  font-size: 1.05rem;
+}
+
+.roadmap-hero .roadmap-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2xl);
+  flex-wrap: wrap;
+}
+
+.roadmap-hero .roadmap-stat {
+  text-align: center;
+}
+
+.roadmap-hero .roadmap-stat span {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+.roadmap-hero .roadmap-stat small {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* --- Timeline Container --- */
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-xl) 0 var(--space-4xl);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 40px;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    var(--accent-cyan),
+    var(--accent-yellow) 50%,
+    var(--accent-purple) 100%
+  );
+  border-radius: 2px;
+  opacity: 0.3;
+}
+
+/* --- Timeline Phase --- */
+.timeline-phase {
+  position: relative;
+  margin-bottom: var(--space-2xl);
+  padding-left: 90px;
+}
+
+.timeline-phase:last-child {
+  margin-bottom: 0;
+}
+
+/* Phase Number Circle */
+.phase-number {
+  position: absolute;
+  left: 22px;
+  top: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  z-index: 2;
+  border: 3px solid var(--bg-primary);
+}
+
+.timeline-phase:nth-child(odd) .phase-number {
+  background: var(--accent-cyan);
+  color: var(--bg-primary);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.35);
+}
+
+.timeline-phase:nth-child(even) .phase-number {
+  background: var(--accent-yellow);
+  color: var(--bg-primary);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.35);
+}
+
+/* Phase Card */
+.phase-card {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  transition: all var(--transition-normal);
+}
+
+.phase-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.phase-header .phase-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.phase-header h3 {
+  font-size: 1.15rem;
+  flex: 1;
+}
+
+.phase-header .phase-duration {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  white-space: nowrap;
+}
+
+/* Phase Content */
+.phase-description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+  line-height: 1.7;
+}
+
+/* Skills List */
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.skill-tag {
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  transition: all var(--transition-fast);
+}
+
+.skill-tag:hover {
+  background: var(--accent-cyan-dim);
+  color: var(--accent-cyan);
+  border-color: rgba(0, 229, 255, 0.3);
+}
+
+/* Resources Section */
+.phase-resources {
+  border-top: 1px solid var(--glass-border);
+  padding-top: var(--space-lg);
+}
+
+.phase-resources h4 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resources-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* --- Back to Track Link --- */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 8px 0;
+  transition: color var(--transition-fast);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--accent-cyan);
+}
+
+/* --- Completion Banner --- */
+.completion-banner {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-xl);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.completion-banner .completion-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-lg);
+  display: block;
+}
+
+.completion-banner h2 {
+  margin-bottom: var(--space-md);
+}
+
+.completion-banner p {
+  margin-bottom: var(--space-xl);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .timeline::before {
+    left: 20px;
+  }
+
+  .timeline-phase {
+    padding-left: 56px;
+  }
+
+  .phase-number {
+    left: 2px;
+    width: 34px;
+    height: 34px;
+    font-size: 0.8rem;
+  }
+
+  .phase-header {
+    flex-wrap: wrap;
+  }
+
+  .phase-header .phase-duration {
+    width: 100%;
+    text-align: center;
+    margin-top: var(--space-sm);
+  }
+
+  .roadmap-hero {
+    padding: 120px 0 var(--space-xl);
+  }
+}

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEVPATH — Contact Us</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <style>
+    .contact-hero {
+      padding: 140px 0 var(--space-2xl);
+      text-align: center;
+    }
+
+    .contact-hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: var(--space-md);
+    }
+
+    .contact-hero p {
+      max-width: 500px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+
+    .contact-content {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: var(--space-2xl);
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 0 var(--space-lg) var(--space-4xl);
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    .contact-card {
+      display: flex;
+      gap: var(--space-lg);
+      padding: var(--space-xl);
+      align-items: center;
+    }
+
+    .contact-card .contact-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .contact-card h4 {
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .contact-card p,
+    .contact-card a {
+      font-size: 0.85rem;
+      word-break: break-all;
+    }
+
+    .contact-form-card {
+      padding: var(--space-2xl);
+    }
+
+    .contact-form-card h3 {
+      margin-bottom: var(--space-lg);
+      font-size: 1.3rem;
+    }
+
+    .form-group {
+      margin-bottom: var(--space-md);
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      transition: all var(--transition-fast);
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .contact-form-card .btn {
+      width: 100%;
+      margin-top: var(--space-sm);
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: var(--space-2xl);
+    }
+
+    .form-success.show {
+      display: block;
+      animation: fadeInUp 0.5s var(--ease-out);
+    }
+
+    .form-success .success-icon {
+      font-size: 3rem;
+      color: var(--accent-green);
+      margin-bottom: var(--space-md);
+    }
+
+    .form-success h3 {
+      margin-bottom: var(--space-sm);
+    }
+
+    .error-msg {
+      display: none;
+      color: #f87171;
+      font-size: 0.85rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    @media (max-width: 768px) {
+      .contact-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="page-enter">
+
+  <!-- Navbar -->
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">
+        <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+      </a>
+      <div class="nav-menu" id="navMenu">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./index.html#tracks" class="nav-link">Tracks</a>
+        <a href="./contactus.html" class="nav-link active">Contact</a>
+        <a href="./SignUp_LogIn_Form.html" class="nav-link nav-btn">Sign In</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="contact-hero">
+      <div class="container">
+        <h1 class="reveal">Get in <span class="gradient-text">Touch</span></h1>
+        <p class="reveal">Have a question, feedback, or suggestion? We'd love to hear from you.</p>
+      </div>
+    </section>
+
+    <section class="contact-content">
+      <!-- Info Cards -->
+      <div class="contact-info">
+        <div class="glass-card contact-card reveal">
+          <div class="contact-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div>
+            <h4>Email</h4>
+            <a href="mailto:sci.MohamedAbdelaziz01652@alexu.edu.eg" style="color: var(--accent-cyan);">sci.MohamedAbdelaziz01652@alexu.edu.eg</a>
+          </div>
+        </div>
+
+        <div class="glass-card contact-card reveal">
+          <div class="contact-icon" style="background: var(--accent-yellow-dim); color: var(--accent-yellow);">
+            <i class="fa-brands fa-linkedin-in"></i>
+          </div>
+          <div>
+            <h4>LinkedIn</h4>
+            <a href="https://www.linkedin.com/in/mohamed--zizo--" target="_blank" rel="noopener noreferrer">linkedin.com/in/mohamed--zizo--</a>
+          </div>
+        </div>
+
+        <div class="glass-card contact-card reveal">
+          <div class="contact-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">
+            <i class="fa-brands fa-github"></i>
+          </div>
+          <div>
+            <h4>GitHub Profile</h4>
+            <a href="https://github.com/mohamed-zizo-sketch" target="_blank" rel="noopener noreferrer">github.com/mohamed-zizo-sketch</a>
+          </div>
+        </div>
+
+        <div class="glass-card contact-card reveal">
+          <div class="contact-icon" style="background: rgba(52,211,153,0.15); color: #34d399;">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div>
+            <h4>Fast Response</h4>
+            <p>Direct communication within 24 hours.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="glass-card contact-form-card reveal-right">
+        <div id="formContent">
+          <h3>Send a Message</h3>
+          <div id="contactError" class="error-msg"></div>
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="contactName">Your Name</label>
+              <input type="text" id="contactName" name="name" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">Email Address</label>
+              <input type="email" id="contactEmail" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+              <label for="contactSubject">Subject</label>
+              <input type="text" id="contactSubject" name="subject" placeholder="What's this about?">
+            </div>
+            <div class="form-group">
+              <label for="contactMessage">Message</label>
+              <textarea id="contactMessage" name="message" placeholder="Write your message here..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              <i class="fa-solid fa-paper-plane"></i> Send Message
+            </button>
+          </form>
+        </div>
+
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <h3>Message Sent!</h3>
+          <p id="successMsg">Thank you for reaching out. We have saved your message and will respond soon.</p>
+          <button class="btn btn-sm btn-outline" style="margin-top: 1rem;" onclick="document.getElementById('formContent').style.display='block'; document.getElementById('formSuccess').classList.remove('show'); document.getElementById('contactForm').reset();">Send Another Message</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="./index.html" class="nav-logo">
+          <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+        </a>
+        <p>Your path to developing yourself</p>
+        <div class="footer-social">
+          <a href="https://github.com/mohamed-zizo-sketch" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/mohamed--zizo--" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Tracks</h4>
+        <a href="./test.html">AI Engineering</a>
+        <a href="./fullstack.html">Full-Stack Dev</a>
+        <a href="./ui.html">UI/UX Design</a>
+        <a href="./cs.html">Cyber Security</a>
+        <a href="./dt.html">Data Analysis</a>
+      </div>
+      <div class="footer-column">
+        <h4>Links</h4>
+        <a href="./index.html">Home</a>
+        <a href="./contactus.html">Contact Us</a>
+        <a href="./SignUp_LogIn_Form.html">Sign In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 DEVPATH. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="./js/auth.js"></script>
+  <script>
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    if (navToggle) {
+      navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('open');
+      });
+    }
+
+    // Scroll reveal
+    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger-children');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // Autofill user email & name if logged in
+    const user = Auth.getUser();
+    if (user) {
+      if (user.full_name) document.getElementById('contactName').value = user.full_name;
+      if (user.email) document.getElementById('contactEmail').value = user.email;
+    }
+
+    // Backend Contact API integration
+    const contactForm = document.getElementById('contactForm');
+    const formContent = document.getElementById('formContent');
+    const formSuccess = document.getElementById('formSuccess');
+    const submitBtn = document.getElementById('submitBtn');
+    const contactError = document.getElementById('contactError');
+
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      contactError.style.display = 'none';
+
+      const name = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const subject = document.getElementById('contactSubject').value.trim();
+      const message = document.getElementById('contactMessage').value.trim();
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending...`;
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, subject, message })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to send message');
+
+        formContent.style.display = 'none';
+        formSuccess.classList.add('show');
+      } catch (err) {
+        contactError.textContent = err.message;
+        contactError.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Message`;
+      }
+    });
+  </script>
+
+</body>
+</html>

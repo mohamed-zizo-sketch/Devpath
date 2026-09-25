@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Embedded Systems & IoT Roadmap — DEVPATH</title>
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/roadmap.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="page-enter" data-track="embedded">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">
+        <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+      </a>
+      <div class="nav-menu" id="navMenu">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./index.html#tracks" class="nav-link">Tracks</a>
+        <a href="./contactus.html" class="nav-link">Contact</a>
+        <a href="./SignUp_LogIn_Form.html" class="nav-link nav-btn">Sign In</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="roadmap-hero reveal">
+      <div class="hero-container">
+        <a href="./embedded.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Embedded Systems & IoT</a>
+        <h1>Embedded Systems & IoT Roadmap</h1>
+        <p>Learn C/C++ programming for microcontrollers, interface hardware sensors, configure RTOS multitasking, and connect to IoT cloud platforms.</p>
+        <div class="roadmap-stats">
+          <span><i class="fa-solid fa-layer-group"></i> 9 Phases</span>
+          <span><i class="fa-regular fa-clock"></i> 7-10 Months</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="timeline-container">
+      <div class="timeline">
+        <!-- Phase 1 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">1</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-code"></i>
+              </div>
+              <div>
+                <h3>Phase 1: Electronics & C Programming Basics</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Understand Ohm's law, circuit basics, and master low-level C programming, pointers, and memory manipulation.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Voltage & Current</span>
+              <span class="skill-tag">Pointers & Memory</span>
+              <span class="skill-tag">Bitwise Operators</span>
+              <span class="skill-tag">Structs & Unions</span>
+              <span class="skill-tag">Memory Registers</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/playlist?list=PLXWmvFosO21h36_Hq-861c8v3I49kG9Vw" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Electronics Basics in Arabic</div>
+                    <div class="resource-platform">Dr. Walid Issa</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=KJgsSFOSQv0" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">C Programming Full Course</div>
+                    <div class="resource-platform">freeCodeCamp</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">2</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-microchip"></i>
+              </div>
+              <div>
+                <h3>Phase 2: Microcontrollers & Arduino</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Get hands-on experience controlling hardware input and output logic using Arduino microcontrollers.</p>
+            <div class="skills-list">
+              <span class="skill-tag">GPIO Digital I/O</span>
+              <span class="skill-tag">Analog to Digital (ADC)</span>
+              <span class="skill-tag">Hardware PWM</span>
+              <span class="skill-tag">External Interrupts</span>
+              <span class="skill-tag">Timers</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/playlist?list=PLGs0VKk2DiYw-L-RibttcvK-fdEEFpz_c" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Arduino Tutorial Series</div>
+                    <div class="resource-platform">Paul McWhorter</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://docs.arduino.cc/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Official Arduino Documentation</div>
+                    <div class="resource-platform">Arduino.cc</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">3</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <h3>Phase 3: Sensors, Actuators & Interfacing</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Capture real-world environmental data with sensors and control motors, relays, and servo actuators.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Temperature & Humidity Sensors</span>
+              <span class="skill-tag">Ultrasonic & Motion</span>
+              <span class="skill-tag">Servo & Stepper Motors</span>
+              <span class="skill-tag">Relay Switching</span>
+              <span class="skill-tag">Debouncing</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/c/Dronebotworkshop1" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Arduino Sensor Workshops</div>
+                    <div class="resource-platform">DroneBot Workshop</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">4</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-diagram-project"></i>
+              </div>
+              <div>
+                <h3>Phase 4: Communication Protocols</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Connect multiple IC chips, displays, and sensors using standard serial communication buses.</p>
+            <div class="skills-list">
+              <span class="skill-tag">UART Serial Communication</span>
+              <span class="skill-tag">I2C Bus & Addressing</span>
+              <span class="skill-tag">SPI High-Speed Protocol</span>
+              <span class="skill-tag">CAN Bus Basics</span>
+              <span class="skill-tag">Logic Analyzers</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/user/greatscottlab" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">I2C and SPI Explained</div>
+                    <div class="resource-platform">GreatScott!</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">5</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-brands fa-raspberry-pi"></i>
+              </div>
+              <div>
+                <h3>Phase 5: Embedded Linux & Raspberry Pi</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Harness full operating system power on single-board computers for complex video processing and networking.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Raspberry Pi OS</span>
+              <span class="skill-tag">Linux Kernel & Devices</span>
+              <span class="skill-tag">Python for Hardware</span>
+              <span class="skill-tag">GPIO Control in Linux</span>
+              <span class="skill-tag">Headless Setup</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Raspberry Pi Documentation</div>
+                    <div class="resource-platform">Raspberry Pi</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 6 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">6</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-clock"></i>
+              </div>
+              <div>
+                <h3>Phase 6: Real-Time Operating Systems (FreeRTOS)</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Handle deterministic multitasking on resource-constrained microcontrollers using FreeRTOS.</p>
+            <div class="skills-list">
+              <span class="skill-tag">RTOS Task Creation</span>
+              <span class="skill-tag">Task Priorities & Preemption</span>
+              <span class="skill-tag">Binary & Counting Semaphores</span>
+              <span class="skill-tag">Mutexes & Priority Inversion</span>
+              <span class="skill-tag">Message Queues</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/playlist?list=PLPW8O6W-1chyrd_Ms-nqAjrlG_A18t52U" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Introduction to FreeRTOS</div>
+                    <div class="resource-platform">DigiKey</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://www.freertos.org/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">FreeRTOS Official Guide</div>
+                    <div class="resource-platform">FreeRTOS.org</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 7 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">7</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-wifi"></i>
+              </div>
+              <div>
+                <h3>Phase 7: Wireless Communication & ESP32</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Transmit sensor data wirelessly over Wi-Fi and Bluetooth Low Energy (BLE) using the popular ESP32 SoC.</p>
+            <div class="skills-list">
+              <span class="skill-tag">ESP32 Architecture</span>
+              <span class="skill-tag">Wi-Fi Client & Access Point</span>
+              <span class="skill-tag">BLE Advertising & Services</span>
+              <span class="skill-tag">Web Server on Microcontroller</span>
+              <span class="skill-tag">OTA Updates</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://randomnerdtutorials.com/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">ESP32 Tutorials & Guides</div>
+                    <div class="resource-platform">Random Nerd Tutorials</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 8 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">8</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-network-wired"></i>
+              </div>
+              <div>
+                <h3>Phase 8: IoT Protocols (MQTT & CoAP)</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Publish and subscribe sensor telemetry streams using lightweight, network-efficient IoT protocols.</p>
+            <div class="skills-list">
+              <span class="skill-tag">MQTT Architecture</span>
+              <span class="skill-tag">Topics & Wildcards</span>
+              <span class="skill-tag">Quality of Service (QoS)</span>
+              <span class="skill-tag">Mosquitto Broker</span>
+              <span class="skill-tag">CoAP Protocol</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/watch?v=EIxdz-2rhLs" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">MQTT Protocol Explained</div>
+                    <div class="resource-platform">TechNet</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 9 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">9</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-brands fa-aws"></i>
+              </div>
+              <div>
+                <h3>Phase 9: IoT Cloud Platforms & Dashboards</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Store, visualize, and analyze connected sensor data using AWS IoT Core and Node-RED dashboards.</p>
+            <div class="skills-list">
+              <span class="skill-tag">AWS IoT Core</span>
+              <span class="skill-tag">Device Shadows & Certificates</span>
+              <span class="skill-tag">Node-RED Visual Flow Automation</span>
+              <span class="skill-tag">Grafana for IoT</span>
+              <span class="skill-tag">Edge Computing</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://aws.amazon.com/iot-core/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">AWS IoT Core Documentation</div>
+                    <div class="resource-platform">AWS</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Completion Banner -->
+    <section class="completion-banner reveal">
+      <div class="completion-inner">
+        <div class="completion-icon"><i class="fa-solid fa-trophy"></i></div>
+        <h2>Congratulations on Completing the Track!</h2>
+        <p>You have mastered the foundational and advanced competencies in this engineering domain. Build a portfolio capstone and prepare for technical interviews.</p>
+        <div class="completion-actions">
+          <a href="./index.html#tracks" class="btn btn-primary"><i class="fa-solid fa-compass"></i> Explore Another Track</a>
+          <a href="./contactus.html" class="btn btn-outline"><i class="fa-solid fa-paper-plane"></i> Share Feedback</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="./index.html" class="nav-logo">
+          <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+        </a>
+        <p>Your path to developing yourself</p>
+        <div class="footer-social">
+          <a href="https://github.com/mohamed-zizo-sketch" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/mohamed--zizo--" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Top Tracks</h4>
+        <a href="./test.html">AI Engineering</a>
+        <a href="./fullstack.html">Full-Stack Dev</a>
+        <a href="./mobile.html">Mobile Development</a>
+        <a href="./devops.html">Cloud & DevOps</a>
+        <a href="./cs.html">Cyber Security</a>
+        <a href="./dt.html">Data Analysis</a>
+      </div>
+      <div class="footer-column">
+        <h4>More Tracks</h4>
+        <a href="./gamedev.html">Game Development</a>
+        <a href="./embedded.html">Embedded & IoT</a>
+        <a href="./blockchain.html">Blockchain & Web3</a>
+        <a href="./mle.html">Machine Learning Ops</a>
+        <a href="./qa.html">Software Testing (QA)</a>
+        <a href="./ui.html">UI/UX Design</a>
+      </div>
+      <div class="footer-column">
+        <h4>Links</h4>
+        <a href="./index.html">Home</a>
+        <a href="./contactus.html">Contact Us</a>
+        <a href="./SignUp_LogIn_Form.html">Sign In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 DEVPATH. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="./js/auth.js"></script>
+  <script src="./js/progress.js"></script>
+  <script src="./main_page.js"></script>
+</body>
+</html>

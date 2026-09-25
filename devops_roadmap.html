@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud & DevOps Engineering Roadmap — DEVPATH</title>
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/roadmap.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="page-enter" data-track="devops">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">
+        <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+      </a>
+      <div class="nav-menu" id="navMenu">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./index.html#tracks" class="nav-link">Tracks</a>
+        <a href="./contactus.html" class="nav-link">Contact</a>
+        <a href="./SignUp_LogIn_Form.html" class="nav-link nav-btn">Sign In</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="roadmap-hero reveal">
+      <div class="hero-container">
+        <a href="./devops.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Cloud & DevOps</a>
+        <h1>Cloud & DevOps Engineering Roadmap</h1>
+        <p>Learn to automate software delivery, orchestrate containers with Kubernetes, configure cloud infrastructure as code, and master CI/CD.</p>
+        <div class="roadmap-stats">
+          <span><i class="fa-solid fa-layer-group"></i> 9 Phases</span>
+          <span><i class="fa-regular fa-clock"></i> 6-9 Months</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="timeline-container">
+      <div class="timeline">
+        <!-- Phase 1 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">1</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-brands fa-linux"></i>
+              </div>
+              <div>
+                <h3>Phase 1: Linux & Shell Scripting</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Master the operating system that powers servers, file permissions, networking tools, and Bash automation.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Linux File Hierarchy</span>
+              <span class="skill-tag">Permissions & Users</span>
+              <span class="skill-tag">SSH & Systemd</span>
+              <span class="skill-tag">Bash Scripting</span>
+              <span class="skill-tag">Grep, Awk & Sed</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAwcooEQK-a-200X5Hq7rLg1" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Linux Command Line in Arabic</div>
+                    <div class="resource-platform">Elzero Web School</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=tK9Oc6AEnZA" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Bash Scripting Full Course</div>
+                    <div class="resource-platform">freeCodeCamp</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">2</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-network-wired"></i>
+              </div>
+              <div>
+                <h3>Phase 2: Networking Fundamentals</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Understand internet protocols, DNS resolution, routing, SSL/TLS certificates, and load balancing.</p>
+            <div class="skills-list">
+              <span class="skill-tag">TCP/IP & UDP</span>
+              <span class="skill-tag">DNS & DHCP</span>
+              <span class="skill-tag">HTTP / HTTPS & TLS</span>
+              <span class="skill-tag">Load Balancers</span>
+              <span class="skill-tag">VPC & Subnets</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/@TechWorldwithNana" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Networking for DevOps</div>
+                    <div class="resource-platform">TechWorld with Nana</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">3</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-brands fa-aws"></i>
+              </div>
+              <div>
+                <h3>Phase 3: Cloud Computing (AWS)</h3>
+                <span class="phase-duration">5 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Provision scalable server infrastructure, storage buckets, managed databases, and IAM access controls.</p>
+            <div class="skills-list">
+              <span class="skill-tag">AWS EC2 & Security Groups</span>
+              <span class="skill-tag">Amazon S3</span>
+              <span class="skill-tag">AWS RDS & Aurora</span>
+              <span class="skill-tag">IAM Roles & Policies</span>
+              <span class="skill-tag">CloudWatch</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/watch?v=3hLmDS179YE" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">AWS Cloud Practitioner Course</div>
+                    <div class="resource-platform">freeCodeCamp</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://aws.amazon.com/docs/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">AWS Documentation</div>
+                    <div class="resource-platform">AWS</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">4</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-brands fa-docker"></i>
+              </div>
+              <div>
+                <h3>Phase 4: Containerization with Docker</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Package applications into portable, lightweight containers for isolated, reproducible deployments.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Dockerfiles & Layers</span>
+              <span class="skill-tag">Docker Compose</span>
+              <span class="skill-tag">Volume Mounting</span>
+              <span class="skill-tag">Bridge Networking</span>
+              <span class="skill-tag">Image Registries</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/watch?v=3c-iBn73dDE" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Docker Crash Course</div>
+                    <div class="resource-platform">TechWorld with Nana</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://docs.docker.com/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Docker Official Documentation</div>
+                    <div class="resource-platform">Docker</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">5</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-dharmachakra"></i>
+              </div>
+              <div>
+                <h3>Phase 5: Orchestration with Kubernetes</h3>
+                <span class="phase-duration">5 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Deploy, auto-scale, and manage containerized microservices across production Kubernetes clusters.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Pods & ReplicaSets</span>
+              <span class="skill-tag">Deployments & Services</span>
+              <span class="skill-tag">ConfigMaps & Secrets</span>
+              <span class="skill-tag">Ingress Controllers</span>
+              <span class="skill-tag">Helm Package Manager</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/watch?v=X48VuDVv0do" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Kubernetes Crash Course</div>
+                    <div class="resource-platform">freeCodeCamp</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://kubernetes.io/docs/home/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Kubernetes Documentation</div>
+                    <div class="resource-platform">Kubernetes.io</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 6 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">6</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-cube"></i>
+              </div>
+              <div>
+                <h3>Phase 6: Infrastructure as Code (Terraform)</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Define and provision cloud resources safely and predictably using declarative HCL configuration files.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Terraform CLI</span>
+              <span class="skill-tag">HCL Syntax</span>
+              <span class="skill-tag">State Files & Remote Backends</span>
+              <span class="skill-tag">Terraform Modules</span>
+              <span class="skill-tag">Variables & Outputs</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/watch?v=l5k1ai_GBDE" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Terraform Full Course</div>
+                    <div class="resource-platform">TechWorld with Nana</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://developer.hashicorp.com/terraform/tutorials" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Terraform Tutorials</div>
+                    <div class="resource-platform">HashiCorp</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 7 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">7</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-brands fa-github"></i>
+              </div>
+              <div>
+                <h3>Phase 7: CI/CD Delivery Pipelines</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Automate linting, unit testing, image builds, and deployments with GitHub Actions and Jenkins.</p>
+            <div class="skills-list">
+              <span class="skill-tag">GitHub Actions Workflows</span>
+              <span class="skill-tag">CI Testing Runners</span>
+              <span class="skill-tag">Continuous Deployment</span>
+              <span class="skill-tag">Artifacts & Releases</span>
+              <span class="skill-tag">Secret Management</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/watch?v=eB0nUzAI7M8" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">GitHub Actions Tutorial</div>
+                    <div class="resource-platform">Fireship</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=FX322RVNGj4" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Jenkins Tutorial for Beginners</div>
+                    <div class="resource-platform">TechWorld with Nana</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 8 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">8</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+              <div>
+                <h3>Phase 8: Monitoring & Observability</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Collect metrics, visualize performance dashboards, and set up alert notifications for production incidents.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Prometheus Scraping & PromQL</span>
+              <span class="skill-tag">Grafana Dashboards</span>
+              <span class="skill-tag">Alertmanager</span>
+              <span class="skill-tag">Log Aggregation (Loki/ELK)</span>
+              <span class="skill-tag">Distributed Tracing</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/@freecodecamp" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Prometheus & Grafana Setup</div>
+                    <div class="resource-platform">freeCodeCamp</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 9 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">9</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <div>
+                <h3>Phase 9: DevSecOps & Security Hardening</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Integrate security scanning into the deployment lifecycle, vulnerability assessment, and RBAC policies.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Container Vulnerability Scanning (Trivy)</span>
+              <span class="skill-tag">Static Code Analysis (SAST)</span>
+              <span class="skill-tag">Vault Secret Management</span>
+              <span class="skill-tag">Kubernetes RBAC</span>
+              <span class="skill-tag">Zero Trust</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://owasp.org/www-project-devsecops-guideline/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">OWASP DevSecOps Guideline</div>
+                    <div class="resource-platform">OWASP</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Completion Banner -->
+    <section class="completion-banner reveal">
+      <div class="completion-inner">
+        <div class="completion-icon"><i class="fa-solid fa-trophy"></i></div>
+        <h2>Congratulations on Completing the Track!</h2>
+        <p>You have mastered the foundational and advanced competencies in this engineering domain. Build a portfolio capstone and prepare for technical interviews.</p>
+        <div class="completion-actions">
+          <a href="./index.html#tracks" class="btn btn-primary"><i class="fa-solid fa-compass"></i> Explore Another Track</a>
+          <a href="./contactus.html" class="btn btn-outline"><i class="fa-solid fa-paper-plane"></i> Share Feedback</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="./index.html" class="nav-logo">
+          <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+        </a>
+        <p>Your path to developing yourself</p>
+        <div class="footer-social">
+          <a href="https://github.com/mohamed-zizo-sketch" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/mohamed--zizo--" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Top Tracks</h4>
+        <a href="./test.html">AI Engineering</a>
+        <a href="./fullstack.html">Full-Stack Dev</a>
+        <a href="./mobile.html">Mobile Development</a>
+        <a href="./devops.html">Cloud & DevOps</a>
+        <a href="./cs.html">Cyber Security</a>
+        <a href="./dt.html">Data Analysis</a>
+      </div>
+      <div class="footer-column">
+        <h4>More Tracks</h4>
+        <a href="./gamedev.html">Game Development</a>
+        <a href="./embedded.html">Embedded & IoT</a>
+        <a href="./blockchain.html">Blockchain & Web3</a>
+        <a href="./mle.html">Machine Learning Ops</a>
+        <a href="./qa.html">Software Testing (QA)</a>
+        <a href="./ui.html">UI/UX Design</a>
+      </div>
+      <div class="footer-column">
+        <h4>Links</h4>
+        <a href="./index.html">Home</a>
+        <a href="./contactus.html">Contact Us</a>
+        <a href="./SignUp_LogIn_Form.html">Sign In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 DEVPATH. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="./js/auth.js"></script>
+  <script src="./js/progress.js"></script>
+  <script src="./main_page.js"></script>
+</body>
+</html>

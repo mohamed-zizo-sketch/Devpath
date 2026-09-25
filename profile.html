@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEVPATH — My Account & Settings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <style>
+    .profile-hero {
+      padding: 130px 0 var(--space-2xl);
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: var(--space-2xl);
+      margin-bottom: var(--space-4xl);
+    }
+
+    .profile-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    .profile-avatar-card {
+      padding: var(--space-2xl);
+      text-align: center;
+    }
+
+    .avatar-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      color: #03032d;
+      margin: 0 auto var(--space-md);
+      font-weight: 700;
+    }
+
+    .profile-stats-card {
+      padding: var(--space-xl);
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.85rem;
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .profile-main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xl);
+    }
+
+    .settings-card {
+      padding: var(--space-2xl);
+    }
+
+    .settings-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .settings-card .card-subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    .input-group {
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 44px 14px 44px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all var(--transition-fast);
+    }
+
+    .input-group input:focus {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+    }
+
+    .input-group .input-icon {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    .toggle-pass-btn {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .toggle-pass-btn:hover {
+      color: var(--accent-cyan);
+    }
+
+    .status-msg {
+      display: none;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .status-msg.error {
+      background: rgba(248, 113, 113, 0.15);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: #f87171;
+    }
+
+    .status-msg.success {
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: #34d399;
+    }
+
+    @media (max-width: 768px) {
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="page-enter">
+
+  <!-- Navbar -->
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">
+        <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+      </a>
+      <div class="nav-menu" id="navMenu">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./index.html#tracks" class="nav-link">Tracks</a>
+        <a href="./contactus.html" class="nav-link">Contact</a>
+        <a href="./SignUp_LogIn_Form.html" class="nav-link nav-btn">Sign In</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="profile-hero">
+      <h1 class="reveal">Account <span class="gradient-text">Settings</span></h1>
+      <p class="reveal">Manage your profile, login credentials, and learning progress.</p>
+    </section>
+
+    <div class="profile-grid">
+      <!-- Sidebar -->
+      <aside class="profile-sidebar">
+        <div class="glass-card profile-avatar-card reveal">
+          <div class="avatar-circle" id="userInitial">?</div>
+          <h3 id="userNameDisplay">Loading...</h3>
+          <p id="userEmailDisplay" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; word-break: break-all;">user@email.com</p>
+          <div style="margin-top: 14px;">
+            <span class="badge" id="userRoleBadge" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">Member</span>
+          </div>
+        </div>
+
+        <div class="glass-card profile-stats-card reveal">
+          <h4 style="margin-bottom: var(--space-md); font-size: 0.95rem;"><i class="fa-solid fa-chart-simple" style="color: var(--accent-cyan);"></i> Progress Overview</h4>
+          <div class="stat-row">
+            <span style="color: var(--text-secondary);">Phases Completed</span>
+            <strong id="completedPhasesCount" style="color: var(--accent-cyan);">0</strong>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--text-secondary);">Total Platform Phases</span>
+            <span>108</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--text-secondary);">Available Tracks</span>
+            <span>12 Tracks</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--text-secondary);">Account Type</span>
+            <span id="accountTypeDisplay">Standard</span>
+          </div>
+        </div>
+
+        <button class="btn btn-outline" style="border-color: rgba(248, 113, 113, 0.4); color: #f87171;" onclick="Auth.logout()">
+          <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </button>
+      </aside>
+
+      <!-- Main Settings -->
+      <div class="profile-main">
+        <!-- Update Name -->
+        <div class="glass-card settings-card reveal">
+          <h3><i class="fa-solid fa-user-pen" style="color: var(--accent-cyan);"></i> Profile Information</h3>
+          <p class="card-subtitle">Update your personal display name across the platform.</p>
+
+          <div id="profileMsg" class="status-msg"></div>
+
+          <form id="profileForm" onsubmit="return false;">
+            <div class="input-group">
+              <label for="profileName">Full Name</label>
+              <input type="text" id="profileName" required>
+              <i class="fa-solid fa-user input-icon"></i>
+            </div>
+            <div class="input-group">
+              <label for="profileEmail">Email Address (Read-only)</label>
+              <input type="email" id="profileEmail" disabled style="opacity: 0.6; cursor: not-allowed;">
+              <i class="fa-solid fa-envelope input-icon"></i>
+            </div>
+            <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+          </form>
+        </div>
+
+        <!-- Change Password -->
+        <div class="glass-card settings-card reveal">
+          <h3><i class="fa-solid fa-lock" style="color: var(--accent-yellow);"></i> Change Password</h3>
+          <p class="card-subtitle">Ensure your account is using a long, randomized password to stay secure.</p>
+
+          <div id="passMsg" class="status-msg"></div>
+
+          <form id="passwordForm" onsubmit="return false;">
+            <div class="input-group">
+              <label for="currentPass">Current Password</label>
+              <input type="password" id="currentPass" placeholder="Enter your current password" required>
+              <i class="fa-solid fa-key input-icon"></i>
+              <button type="button" class="toggle-pass-btn" data-target="currentPass"><i class="fa-regular fa-eye"></i></button>
+            </div>
+
+            <div class="input-group">
+              <label for="newPass">New Password</label>
+              <input type="password" id="newPass" placeholder="Enter new password (min 6 chars)" required>
+              <i class="fa-solid fa-lock input-icon"></i>
+              <button type="button" class="toggle-pass-btn" data-target="newPass"><i class="fa-regular fa-eye"></i></button>
+            </div>
+
+            <div class="input-group">
+              <label for="confirmNewPass">Confirm New Password</label>
+              <input type="password" id="confirmNewPass" placeholder="Confirm your new password" required>
+              <i class="fa-solid fa-shield-halved input-icon"></i>
+              <button type="button" class="toggle-pass-btn" data-target="confirmNewPass"><i class="fa-regular fa-eye"></i></button>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="changePassBtn">Update Password</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="./index.html" class="nav-logo">
+          <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+        </a>
+        <p>Your path to developing yourself</p>
+        <div class="footer-social">
+          <a href="https://github.com/mohamed-zizo-sketch" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/mohamed--zizo--" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Tracks</h4>
+        <a href="./test.html">AI Engineering</a>
+        <a href="./fullstack.html">Full-Stack Dev</a>
+        <a href="./mobile.html">Mobile Development</a>
+        <a href="./devops.html">Cloud & DevOps</a>
+      </div>
+      <div class="footer-column">
+        <h4>Links</h4>
+        <a href="./index.html">Home</a>
+        <a href="./contactus.html">Contact Us</a>
+        <a href="./SignUp_LogIn_Form.html">Sign In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 DEVPATH. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="./js/auth.js"></script>
+  <script>
+    const token = Auth.getToken();
+    if (!token) {
+      alert('Please sign in to access your profile settings.');
+      window.location.href = './SignUp_LogIn_Form.html';
+    }
+
+    // Toggle password visibility
+    document.querySelectorAll('.toggle-pass-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+        } else {
+          input.type = 'password';
+          btn.innerHTML = '<i class="fa-regular fa-eye"></i>';
+        }
+      });
+    });
+
+    async function loadProfile() {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+          Auth.logout();
+          return;
+        }
+
+        const { user, progress } = await res.json();
+
+        document.getElementById('userNameDisplay').textContent = user.full_name;
+        document.getElementById('userEmailDisplay').textContent = user.email;
+        document.getElementById('profileName').value = user.full_name;
+        document.getElementById('profileEmail').value = user.email;
+        document.getElementById('userInitial').textContent = user.full_name.charAt(0).toUpperCase();
+
+        const completed = progress.filter(p => p.completed).length;
+        document.getElementById('completedPhasesCount').textContent = completed;
+
+        if (user.role === 'admin') {
+          document.getElementById('userRoleBadge').textContent = 'Administrator';
+          document.getElementById('userRoleBadge').style.background = 'rgba(251, 191, 36, 0.2)';
+          document.getElementById('userRoleBadge').style.color = 'var(--accent-yellow)';
+          document.getElementById('accountTypeDisplay').textContent = 'Platform Admin';
+        }
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+      }
+    }
+
+    loadProfile();
+
+    // Profile Name Update
+    const profileForm = document.getElementById('profileForm');
+    const profileMsg = document.getElementById('profileMsg');
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+
+    profileForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      profileMsg.style.display = 'none';
+
+      const full_name = document.getElementById('profileName').value.trim();
+      saveProfileBtn.disabled = true;
+      saveProfileBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+      try {
+        const res = await fetch('/api/auth/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ full_name })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update profile');
+
+        Auth.setSession(data.token, data.user);
+        document.getElementById('userNameDisplay').textContent = data.user.full_name;
+        document.getElementById('userInitial').textContent = data.user.full_name.charAt(0).toUpperCase();
+
+        profileMsg.className = 'status-msg success';
+        profileMsg.textContent = 'Profile name updated successfully!';
+        profileMsg.style.display = 'block';
+      } catch (err) {
+        profileMsg.className = 'status-msg error';
+        profileMsg.textContent = err.message;
+        profileMsg.style.display = 'block';
+      } finally {
+        saveProfileBtn.disabled = false;
+        saveProfileBtn.innerHTML = 'Save Changes';
+      }
+    });
+
+    // Change Password
+    const passwordForm = document.getElementById('passwordForm');
+    const passMsg = document.getElementById('passMsg');
+    const changePassBtn = document.getElementById('changePassBtn');
+
+    passwordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      passMsg.style.display = 'none';
+
+      const currentPassword = document.getElementById('currentPass').value;
+      const newPassword = document.getElementById('newPass').value;
+      const confirmNewPass = document.getElementById('confirmNewPass').value;
+
+      if (newPassword !== confirmNewPass) {
+        passMsg.className = 'status-msg error';
+        passMsg.textContent = 'New passwords do not match.';
+        passMsg.style.display = 'block';
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        passMsg.className = 'status-msg error';
+        passMsg.textContent = 'Password must be at least 6 characters.';
+        passMsg.style.display = 'block';
+        return;
+      }
+
+      changePassBtn.disabled = true;
+      changePassBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+      try {
+        const res = await fetch('/api/auth/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update password');
+
+        passMsg.className = 'status-msg success';
+        passMsg.textContent = 'Password successfully updated!';
+        passMsg.style.display = 'block';
+        passwordForm.reset();
+      } catch (err) {
+        passMsg.className = 'status-msg error';
+        passMsg.textContent = err.message;
+        passMsg.style.display = 'block';
+      } finally {
+        changePassBtn.disabled = false;
+        changePassBtn.innerHTML = 'Update Password';
+      }
+    });
+  </script>
+</body>
+</html>

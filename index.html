@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEVPATH — Your Path to Developing Yourself</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/home.css">
+</head>
+<body class="page-enter">
+
+  <!-- Vanta Background -->
+  <div id="vanta-bg"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">
+        <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+      </a>
+      <div class="nav-menu" id="navMenu">
+        <a href="./index.html" class="nav-link active">Home</a>
+        <a href="#tracks" class="nav-link">Tracks</a>
+        <a href="./contactus.html" class="nav-link">Contact</a>
+        <a href="./SignUp_LogIn_Form.html" class="nav-link nav-btn">Sign In</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">🚀 12 Free In-Demand Tech Career Tracks</div>
+        <h1>Your Path to <span class="gradient-text">Developing Yourself</span></h1>
+        <p>Choose your career track, track your completed phases, and follow curated roadmaps with top industry resources.</p>
+        <div class="hero-buttons">
+          <a href="#tracks" class="btn btn-primary"><i class="fa-solid fa-compass"></i> Explore All 12 Tracks</a>
+          <a href="#about" class="btn btn-outline"><i class="fa-solid fa-info-circle"></i> Learn More</a>
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <span>Scroll</span>
+        <div class="scroll-dot"></div>
+      </div>
+    </section>
+
+    <!-- Tracks Section -->
+    <section id="tracks" class="section">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>Choose Your <span class="gradient-text">Career Track</span></h2>
+          <div class="accent-line"></div>
+          <p>12 industry-standard learning paths crafted with step-by-step milestones, top Arabic & English courses, and practical projects.</p>
+        </div>
+
+        <div class="tracks-grid stagger-children">
+          <!-- 1. AI Engineering -->
+          <a href="./test.html" class="track-card">
+            <img src="./images/track_ai.jpg" alt="AI Engineering" class="track-card-image">
+            <div class="track-card-body">
+              <h3>🤖 AI Engineering</h3>
+              <p>Master machine learning, deep learning, NLP, and computer vision with Python and modern model architectures.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill"><i class="fa-brands fa-python"></i> Python</span>
+                <span class="feature-pill">PyTorch & TF</span>
+                <span class="feature-pill">Deep Learning</span>
+                <span class="feature-pill">NLP & LLMs</span>
+                <span class="feature-pill">Computer Vision</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 8-12 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 2. Full-Stack Development -->
+          <a href="./fullstack.html" class="track-card">
+            <img src="./images/track_fullstack.jpg" alt="Full-Stack Development" class="track-card-image">
+            <div class="track-card-body">
+              <h3>💻 Full-Stack Development</h3>
+              <p>Build dynamic, production-ready web apps from responsive frontend interfaces to scalable backend APIs.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill"><i class="fa-brands fa-react"></i> React</span>
+                <span class="feature-pill"><i class="fa-brands fa-node-js"></i> Node.js</span>
+                <span class="feature-pill">Express</span>
+                <span class="feature-pill">MySQL & Mongo</span>
+                <span class="feature-pill">REST APIs</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 6-9 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 3. Mobile App Development -->
+          <a href="./mobile.html" class="track-card">
+            <img src="./images/track_mobile.jpg" alt="Mobile App Development" class="track-card-image">
+            <div class="track-card-body">
+              <h3>📱 Mobile App Development</h3>
+              <p>Build natively compiled iOS and Android applications from a single codebase with Flutter and React Native.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill">Flutter & Dart</span>
+                <span class="feature-pill">React Native</span>
+                <span class="feature-pill">Bloc & State Mgmt</span>
+                <span class="feature-pill">Firebase BaaS</span>
+                <span class="feature-pill">App Stores</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 6-8 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 4. Cloud & DevOps Engineering -->
+          <a href="./devops.html" class="track-card">
+            <img src="./images/track_devops.jpg" alt="Cloud & DevOps Engineering" class="track-card-image">
+            <div class="track-card-body">
+              <h3>☁️ Cloud & DevOps</h3>
+              <p>Automate deployments, orchestrate containers with Docker & Kubernetes, and master AWS cloud infrastructure.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill"><i class="fa-brands fa-docker"></i> Docker</span>
+                <span class="feature-pill">Kubernetes</span>
+                <span class="feature-pill"><i class="fa-brands fa-aws"></i> AWS Cloud</span>
+                <span class="feature-pill">Terraform IaC</span>
+                <span class="feature-pill">CI/CD & GitHub</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 6-9 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 5. Cyber Security Specialist -->
+          <a href="./cs.html" class="track-card">
+            <img src="./images/track_cybersecurity.jpg" alt="Cyber Security" class="track-card-image">
+            <div class="track-card-body">
+              <h3>🔒 Cyber Security</h3>
+              <p>Defend systems and networks with ethical hacking, penetration testing, digital defense, and forensics.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill">Ethical Hacking</span>
+                <span class="feature-pill">OWASP Top 10</span>
+                <span class="feature-pill">Wireshark & Nmap</span>
+                <span class="feature-pill">Metasploit</span>
+                <span class="feature-pill">Kali Linux</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 8-12 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 6. Data Analysis -->
+          <a href="./dt.html" class="track-card">
+            <img src="./images/track_data.jpg" alt="Data Analysis" class="track-card-image">
+            <div class="track-card-body">
+              <h3>📊 Data Analysis</h3>
+              <p>Turn raw datasets into business decisions with SQL queries, Excel modeling, Python Pandas, and Power BI dashboards.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill">SQL Queries</span>
+                <span class="feature-pill">Python & Pandas</span>
+                <span class="feature-pill">Power BI</span>
+                <span class="feature-pill">Tableau</span>
+                <span class="feature-pill">Excel & Stats</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 6-9 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 7. UI/UX Design -->
+          <a href="./ui.html" class="track-card">
+            <img src="./images/track_uiux.jpg" alt="UI/UX Design" class="track-card-image">
+            <div class="track-card-body">
+              <h3>🎨 UI/UX Design</h3>
+              <p>Craft user-centered digital products, wireframes, high-fidelity prototypes, and scalable design systems in Figma.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill"><i class="fa-brands fa-figma"></i> Figma</span>
+                <span class="feature-pill">UX Research</span>
+                <span class="feature-pill">Wireframing</span>
+                <span class="feature-pill">Design Systems</span>
+                <span class="feature-pill">Micro-interactions</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 6-9 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 8. Game Development -->
+          <a href="./gamedev.html" class="track-card">
+            <img src="./images/track_gamedev.jpg" alt="Game Development" class="track-card-image">
+            <div class="track-card-body">
+              <h3>🎮 Game Development</h3>
+              <p>Create immersive 2D and 3D games with Unity and C#. Master game physics, shaders, audio, and multiplayer.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill"><i class="fa-brands fa-unity"></i> Unity Engine</span>
+                <span class="feature-pill">C# Scripting</span>
+                <span class="feature-pill">2D/3D Physics</span>
+                <span class="feature-pill">Shaders & VFX</span>
+                <span class="feature-pill">Multiplayer Netcode</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 8-10 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 9. Embedded Systems & IoT -->
+          <a href="./embedded.html" class="track-card">
+            <img src="./images/track_embedded.jpg" alt="Embedded Systems & IoT" class="track-card-image">
+            <div class="track-card-body">
+              <h3>⚡ Embedded Systems & IoT</h3>
+              <p>Program microcontrollers, interface hardware sensors with C/C++, and connect devices via MQTT, FreeRTOS & IoT cloud.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill">C/C++ Embedded</span>
+                <span class="feature-pill">Arduino & ESP32</span>
+                <span class="feature-pill">Sensors & I2C/SPI</span>
+                <span class="feature-pill">FreeRTOS</span>
+                <span class="feature-pill">MQTT & IoT Cloud</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 7-10 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 10. Blockchain & Web3 -->
+          <a href="./blockchain.html" class="track-card">
+            <img src="./images/track_blockchain.jpg" alt="Blockchain & Web3" class="track-card-image">
+            <div class="track-card-body">
+              <h3>⛓️ Blockchain & Web3</h3>
+              <p>Write secure Ethereum smart contracts with Solidity, build DApps, and master DeFi protocols and NFT architectures.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill">Solidity</span>
+                <span class="feature-pill"><i class="fa-brands fa-ethereum"></i> Ethereum EVM</span>
+                <span class="feature-pill">Hardhat & Foundry</span>
+                <span class="feature-pill">Ethers.js & Web3</span>
+                <span class="feature-pill">DeFi & Security</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 6-9 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 11. Machine Learning Engineering -->
+          <a href="./mle.html" class="track-card">
+            <img src="./images/track_mle.jpg" alt="Machine Learning Engineering" class="track-card-image">
+            <div class="track-card-body">
+              <h3>⚙️ Machine Learning Ops</h3>
+              <p>Ship ML models into production with automated pipelines, feature stores, model serving, and Kubernetes clusters.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill">MLflow Registry</span>
+                <span class="feature-pill">FastAPI Serving</span>
+                <span class="feature-pill">Docker & K8s ML</span>
+                <span class="feature-pill">Feature Stores</span>
+                <span class="feature-pill">Drift Monitoring</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 7-10 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 12. Software Testing & QA -->
+          <a href="./qa.html" class="track-card">
+            <img src="./images/track_qa.jpg" alt="Software Testing & QA" class="track-card-image">
+            <div class="track-card-body">
+              <h3>🧪 Software Testing & QA</h3>
+              <p>Ensure software quality through automated testing with Selenium, Cypress, Postman API testing, and performance testing.</p>
+              <div class="track-features-pills">
+                <span class="feature-pill">ISTQB Methods</span>
+                <span class="feature-pill">Selenium & Cypress</span>
+                <span class="feature-pill">Postman API Tests</span>
+                <span class="feature-pill">JMeter Load Tests</span>
+                <span class="feature-pill">CI/CD Continuous QA</span>
+              </div>
+              <div class="track-card-footer">
+                <span class="track-phases">9 Phases &bull; 5-8 Months</span>
+                <div class="track-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section" style="background: rgba(255,255,255,0.02);">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>How It <span class="gradient-text">Works</span></h2>
+          <div class="accent-line"></div>
+        </div>
+
+        <div class="steps-grid stagger-children">
+          <div class="glass-card step-card">
+            <div class="step-number">1</div>
+            <h3>Choose a Track</h3>
+            <p>Select any of the 12 tech paths that aligns with your passions and career aspirations.</p>
+          </div>
+          <div class="glass-card step-card">
+            <div class="step-number">2</div>
+            <h3>Follow the Roadmap</h3>
+            <p>Progress through structured milestones with vetted free courses in Arabic & English.</p>
+          </div>
+          <div class="glass-card step-card">
+            <div class="step-number">3</div>
+            <h3>Track & Build</h3>
+            <p>Mark phases as complete in real-time, build portfolio projects, and get job-ready.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+      <div class="container">
+        <div class="about-content">
+          <div class="about-text reveal-left">
+            <h2>About <span class="gradient-text">DEVPATH</span></h2>
+            <p>DEVPATH is an open tech education platform dedicated to providing clear, structured learning roadmaps for aspiring software engineers and digital creators. Our mission is to remove ambiguity by organizing vetted resources into sequential milestones.</p>
+            <p>Create an account to save your learning progress, check off phases you have completed, and navigate 12 world-class engineering disciplines with confidence.</p>
+          </div>
+          <div class="glass-card reveal-right">
+            <div class="about-stats">
+              <div class="stat-item">
+                <span class="stat-number">12</span>
+                <span class="stat-label">Career Tracks</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">108</span>
+                <span class="stat-label">Structured Phases</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Free Forever</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="./index.html" class="nav-logo">
+          <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+        </a>
+        <p>Your path to developing yourself</p>
+        <div class="footer-social">
+          <a href="https://github.com/mohamed-zizo-sketch" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/mohamed--zizo--" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Top Tracks</h4>
+        <a href="./test.html">AI Engineering</a>
+        <a href="./fullstack.html">Full-Stack Dev</a>
+        <a href="./mobile.html">Mobile Development</a>
+        <a href="./devops.html">Cloud & DevOps</a>
+        <a href="./cs.html">Cyber Security</a>
+        <a href="./dt.html">Data Analysis</a>
+      </div>
+      <div class="footer-column">
+        <h4>More Tracks</h4>
+        <a href="./gamedev.html">Game Development</a>
+        <a href="./embedded.html">Embedded & IoT</a>
+        <a href="./blockchain.html">Blockchain & Web3</a>
+        <a href="./mle.html">Machine Learning Ops</a>
+        <a href="./qa.html">Software Testing (QA)</a>
+        <a href="./ui.html">UI/UX Design</a>
+      </div>
+      <div class="footer-column">
+        <h4>Links</h4>
+        <a href="./index.html">Home</a>
+        <a href="./contactus.html">Contact Us</a>
+        <a href="./SignUp_LogIn_Form.html">Sign In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 DEVPATH. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+  <script src="./js/auth.js"></script>
+  <script src="./main_page.js"></script>
+  <script>
+    // Initialize Vanta.NET background
+    if (typeof VANTA !== 'undefined') {
+      VANTA.NET({
+        el: "#vanta-bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0x00e5ff,
+        backgroundColor: 0x03032d,
+        points: 8,
+        maxDistance: 20,
+        spacing: 16
+      });
+    }
+  </script>
+</body>
+</html>

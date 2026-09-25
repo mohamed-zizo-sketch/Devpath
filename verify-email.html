@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEVPATH — Verify Your Email</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #03032d 0%, #0a0a3a 30%, #111155 60%, #0d1a6a 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+      padding: var(--space-lg);
+    }
+
+    .back-home {
+      position: fixed;
+      top: var(--space-lg);
+      left: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: color var(--transition-fast);
+      z-index: 10;
+    }
+
+    .back-home:hover {
+      color: var(--accent-cyan);
+    }
+
+    .back-home .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .verify-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: var(--space-3xl) var(--space-2xl);
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      animation: scaleIn 0.5s var(--ease-out) both;
+    }
+
+    .verify-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-full);
+      background: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .verify-card h2 {
+      font-size: 1.8rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .verify-card .verify-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: var(--space-xl);
+      line-height: 1.6;
+    }
+
+    .verify-email-highlight {
+      color: var(--accent-cyan);
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    /* 6-Digit Code Inputs */
+    .code-inputs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: var(--space-xl);
+    }
+
+    .code-input {
+      width: 52px;
+      height: 60px;
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      font-family: var(--font-heading);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--accent-cyan);
+      outline: none;
+      transition: all var(--transition-fast);
+    }
+
+    .code-input:focus {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .error-box {
+      display: none;
+      background: rgba(248, 113, 113, 0.15);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: #f87171;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    .success-box {
+      display: none;
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: #34d399;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    .dev-hint {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px dashed rgba(251, 191, 36, 0.4);
+      color: var(--accent-yellow);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    .verify-card .btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    .resend-link {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .resend-link a {
+      color: var(--accent-cyan);
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .resend-link a:hover {
+      color: var(--accent-yellow);
+    }
+
+    .resend-link a.disabled {
+      color: var(--text-muted);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="page-enter">
+
+  <a href="./index.html" class="back-home">
+    <i class="fa-solid fa-arrow-left"></i>
+    <span class="nav-logo"><span class="logo-dev">DEV</span><span class="logo-path">PATH</span></span>
+  </a>
+
+  <div class="verify-card">
+    <div class="verify-icon">
+      <i class="fa-solid fa-envelope-circle-check"></i>
+    </div>
+
+    <h2>Verify Your Email</h2>
+    <p class="verify-subtitle">
+      We sent a 6-digit confirmation code to<br>
+      <span class="verify-email-highlight" id="displayEmail">your email address</span>
+    </p>
+
+    <!-- Simulated Demo Hint for Testing -->
+    <div class="dev-hint" id="devHint" style="display: none;">
+      <i class="fa-solid fa-key"></i> <strong>Testing Code:</strong> <span id="hintCode" style="font-family: monospace; font-size: 1.1rem; letter-spacing: 2px;"></span>
+    </div>
+
+    <div id="errorBox" class="error-box"></div>
+    <div id="successBox" class="success-box"></div>
+
+    <div id="verificationForm">
+      <div class="code-inputs" id="codeInputs">
+        <input type="text" maxlength="1" class="code-input" autofocus data-index="0">
+        <input type="text" maxlength="1" class="code-input" data-index="1">
+        <input type="text" maxlength="1" class="code-input" data-index="2">
+        <input type="text" maxlength="1" class="code-input" data-index="3">
+        <input type="text" maxlength="1" class="code-input" data-index="4">
+        <input type="text" maxlength="1" class="code-input" data-index="5">
+      </div>
+
+      <button class="btn btn-primary" id="verifyBtn">
+        <i class="fa-solid fa-check"></i> Verify Account
+      </button>
+
+      <p class="resend-link">
+        Didn't receive the email? <a id="resendBtn">Resend Code</a>
+        <span id="cooldownTimer" style="display: none; color: var(--text-muted);">(<span id="secondsLeft">60</span>s)</span>
+      </p>
+    </div>
+  </div>
+
+  <script src="./js/auth.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenParam = urlParams.get('token');
+    const emailParam = urlParams.get('email');
+    const codeParam = urlParams.get('code');
+
+    const displayEmail = document.getElementById('displayEmail');
+    const devHint = document.getElementById('devHint');
+    const hintCode = document.getElementById('hintCode');
+    const errorBox = document.getElementById('errorBox');
+    const successBox = document.getElementById('successBox');
+    const verificationForm = document.getElementById('verificationForm');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const resendBtn = document.getElementById('resendBtn');
+    const cooldownTimer = document.getElementById('cooldownTimer');
+    const secondsLeft = document.getElementById('secondsLeft');
+    const inputs = document.querySelectorAll('.code-input');
+
+    // Get current email from params or Auth session
+    const currentEmail = emailParam || (Auth.getUser() ? Auth.getUser().email : '');
+    if (currentEmail) {
+      displayEmail.textContent = currentEmail;
+    }
+
+    // Display dev test code if passed in URL
+    if (codeParam) {
+      hintCode.textContent = codeParam;
+      devHint.style.display = 'block';
+      // Auto-fill inputs
+      codeParam.split('').forEach((digit, i) => {
+        if (inputs[i]) inputs[i].value = digit;
+      });
+    }
+
+    // 1. Check if token is in URL (Direct Link verification)
+    if (tokenParam) {
+      autoVerifyToken(tokenParam);
+    }
+
+    async function autoVerifyToken(token) {
+      verifyBtn.disabled = true;
+      verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying email link...';
+
+      try {
+        const res = await fetch('/api/auth/verify-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Verification failed');
+
+        onVerificationSuccess(data);
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.style.display = 'block';
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Verify Account';
+      }
+    }
+
+    // 2. Input handling (auto-focus next, backspace previous, paste handling)
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (val.length === 1 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+        if (/^\d{6}$/.test(pasteData)) {
+          pasteData.split('').forEach((char, i) => {
+            if (inputs[i]) inputs[i].value = char;
+          });
+          inputs[inputs.length - 1].focus();
+        }
+      });
+    });
+
+    // 3. Submit Code
+    verifyBtn.addEventListener('click', async () => {
+      errorBox.style.display = 'none';
+
+      let code = '';
+      inputs.forEach(inp => { code += inp.value.trim(); });
+
+      if (code.length !== 6) {
+        errorBox.textContent = 'Please enter all 6 digits of your verification code.';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+
+      try {
+        const res = await fetch('/api/auth/verify-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail, code })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Verification failed');
+
+        onVerificationSuccess(data);
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.style.display = 'block';
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Verify Account';
+      }
+    });
+
+    function onVerificationSuccess(data) {
+      verificationForm.style.display = 'none';
+      devHint.style.display = 'none';
+      successBox.innerHTML = `
+        <div style="font-size: 2.5rem; color: var(--accent-green); margin-bottom: 10px;">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <strong>Email Verified Successfully!</strong>
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 6px;">Your account is now fully active. Redirecting to DEVPATH...</p>
+      `;
+      successBox.style.display = 'block';
+
+      // Update local storage user if logged in
+      const user = Auth.getUser();
+      if (user) {
+        user.is_verified = true;
+        localStorage.setItem('devpath_user', JSON.stringify(user));
+      }
+
+      setTimeout(() => {
+        window.location.href = './index.html';
+      }, 2000);
+    }
+
+    // 4. Resend Code with 60s cooldown
+    resendBtn.addEventListener('click', async () => {
+      if (!currentEmail) {
+        alert('Please enter your email to resend verification.');
+        return;
+      }
+
+      resendBtn.classList.add('disabled');
+      errorBox.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/auth/resend-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to resend');
+
+        if (data.code) {
+          hintCode.textContent = data.code;
+          devHint.style.display = 'block';
+        }
+
+        // Start 60s countdown
+        let timeLeft = 60;
+        cooldownTimer.style.display = 'inline';
+        secondsLeft.textContent = timeLeft;
+
+        const interval = setInterval(() => {
+          timeLeft--;
+          secondsLeft.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(interval);
+            cooldownTimer.style.display = 'none';
+            resendBtn.classList.remove('disabled');
+          }
+        }, 1000);
+
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.style.display = 'block';
+        resendBtn.classList.remove('disabled');
+      }
+    });
+  </script>
+</body>
+</html>

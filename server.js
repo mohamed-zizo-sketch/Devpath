@@ -1,0 +1,885 @@
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const mysql = require('mysql2/promise');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'devpath_secret_jwt_key_2026_super_secure';
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname)));
+
+// Global DB pool reference
+let dbPool = null;
+let useMockDb = false;
+
+// Mock in-memory storage fallback if MySQL server is not active
+const mockDb = {
+  users: [
+    {
+      id: 1,
+      full_name: 'Admin Mohamed',
+      email: (process.env.ADMIN_EMAIL || 'sci.mohamedabdelaziz01652@alexu.edu.eg').toLowerCase(),
+      password_hash: bcrypt.hashSync('admin123', 10),
+      role: 'admin',
+      is_verified: true,
+      verification_token: null,
+      verification_code: null,
+      reset_token: null,
+      reset_expires: null,
+      created_at: new Date()
+    }
+  ],
+  user_progress: [],
+  contact_messages: []
+};
+
+// Database Initialization
+async function initDatabase() {
+  const dbConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    port: parseInt(process.env.DB_PORT || '3306', 10)
+  };
+
+  try {
+    // 1. Connect without database to ensure database exists
+    const connection = await mysql.createConnection(dbConfig);
+    const dbName = process.env.DB_NAME || 'devpath_db';
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+    await connection.end();
+
+    // 2. Connect pool with database
+    dbPool = mysql.createPool({
+      ...dbConfig,
+      database: dbName,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0
+    });
+
+    // 3. Create tables if they do not exist
+    await dbPool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        full_name VARCHAR(100) NOT NULL,
+        email VARCHAR(150) NOT NULL UNIQUE,
+        password_hash VARCHAR(255) NOT NULL,
+        role ENUM('user', 'admin') DEFAULT 'user',
+        is_verified BOOLEAN DEFAULT FALSE,
+        verification_token VARCHAR(255) DEFAULT NULL,
+        verification_code VARCHAR(10) DEFAULT NULL,
+        reset_token VARCHAR(255) DEFAULT NULL,
+        reset_expires TIMESTAMP NULL DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Ensure columns exist if table was already created
+    try {
+      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE;`);
+      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_token VARCHAR(255) DEFAULT NULL;`);
+      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_code VARCHAR(10) DEFAULT NULL;`);
+      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255) DEFAULT NULL;`);
+      await dbPool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expires TIMESTAMP NULL DEFAULT NULL;`);
+    } catch (e) {
+      // In case MySQL version doesn't support IF NOT EXISTS in ALTER TABLE
+    }
+
+    await dbPool.query(`
+      CREATE TABLE IF NOT EXISTS user_progress (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        track_id VARCHAR(50) NOT NULL,
+        phase_number INT NOT NULL,
+        completed BOOLEAN DEFAULT TRUE,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY unique_user_track_phase (user_id, track_id, phase_number),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await dbPool.query(`
+      CREATE TABLE IF NOT EXISTS contact_messages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(150) NOT NULL,
+        subject VARCHAR(200) DEFAULT 'General Inquiry',
+        message TEXT NOT NULL,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // 4. Seed admin user if not exists
+    const adminEmail = (process.env.ADMIN_EMAIL || 'sci.mohamedabdelaziz01652@alexu.edu.eg').toLowerCase();
+    const [existingAdmin] = await dbPool.query('SELECT id FROM users WHERE email = ?', [adminEmail]);
+    if (existingAdmin.length === 0) {
+      const adminHash = await bcrypt.hash('admin123', 10);
+      await dbPool.query(
+        'INSERT INTO users (full_name, email, password_hash, role, is_verified) VALUES (?, ?, ?, ?, ?)',
+        ['Admin Mohamed', adminEmail, adminHash, 'admin', 1]
+      );
+      console.log(`[Database] Seeded initial admin account: ${adminEmail}`);
+    }
+
+    console.log('✅ Connected to MySQL Database successfully!');
+  } catch (error) {
+    console.warn('⚠️ MySQL connection could not be established:', error.message);
+    console.warn('ℹ️ Falling back to in-memory store so the app remains fully testable without stopping.');
+    useMockDb = true;
+  }
+}
+
+// Authentication Middlewares
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authorization token required' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+}
+
+function adminMiddleware(req, res, next) {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Access denied: Admin privileges required' });
+  }
+  next();
+}
+
+// ----------------- API ROUTES ----------------- //
+
+// 1. Health check & DB Status
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'online',
+    database: useMockDb ? 'in-memory-fallback' : 'mysql',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 2. Register (with email verification code & token generation)
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { full_name, email, password } = req.body;
+
+    if (!full_name || !email || !password) {
+      return res.status(400).json({ error: 'Full name, email, and password are required' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const passwordHash = await bcrypt.hash(password, 10);
+    const isAdminEmail = cleanEmail === (process.env.ADMIN_EMAIL || 'sci.mohamedabdelaziz01652@alexu.edu.eg').toLowerCase();
+    const role = isAdminEmail ? 'admin' : 'user';
+
+    // Generate 6-digit verification code and token
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const isVerified = isAdminEmail ? true : false;
+
+    if (!useMockDb && dbPool) {
+      const [existing] = await dbPool.query('SELECT id FROM users WHERE email = ?', [cleanEmail]);
+      if (existing.length > 0) {
+        return res.status(409).json({ error: 'Email is already registered' });
+      }
+
+      const [result] = await dbPool.query(
+        'INSERT INTO users (full_name, email, password_hash, role, is_verified, verification_token, verification_code) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [full_name.trim(), cleanEmail, passwordHash, role, isVerified ? 1 : 0, verificationToken, verificationCode]
+      );
+
+      const userId = result.insertId;
+      const token = jwt.sign({ id: userId, email: cleanEmail, role, full_name: full_name.trim(), is_verified: isVerified }, JWT_SECRET, { expiresIn: '7d' });
+
+      console.log(`\n📧 [Email Verification Sent]`);
+      console.log(`To: ${cleanEmail}`);
+      console.log(`Code: ${verificationCode}`);
+      console.log(`Link: http://localhost:${PORT}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}\n`);
+
+      return res.status(201).json({
+        message: 'User registered successfully. Please verify your email.',
+        token,
+        user: { id: userId, full_name: full_name.trim(), email: cleanEmail, role, is_verified: isVerified },
+        verificationCode,
+        verificationToken,
+        verificationUrl: `/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}&code=${verificationCode}`
+      });
+    } else {
+      const existing = mockDb.users.find(u => u.email === cleanEmail);
+      if (existing) {
+        return res.status(409).json({ error: 'Email is already registered' });
+      }
+
+      const newUser = {
+        id: mockDb.users.length + 1,
+        full_name: full_name.trim(),
+        email: cleanEmail,
+        password_hash: passwordHash,
+        role,
+        is_verified: isVerified,
+        verification_token: verificationToken,
+        verification_code: verificationCode,
+        reset_token: null,
+        reset_expires: null,
+        created_at: new Date()
+      };
+      mockDb.users.push(newUser);
+
+      const token = jwt.sign({ id: newUser.id, email: cleanEmail, role, full_name: full_name.trim(), is_verified: isVerified }, JWT_SECRET, { expiresIn: '7d' });
+
+      console.log(`\n📧 [Email Verification Sent - Mock]`);
+      console.log(`To: ${cleanEmail}`);
+      console.log(`Code: ${verificationCode}`);
+      console.log(`Link: http://localhost:${PORT}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}\n`);
+
+      return res.status(201).json({
+        message: 'User registered successfully. Please verify your email.',
+        token,
+        user: { id: newUser.id, full_name: newUser.full_name, email: cleanEmail, role, is_verified: isVerified },
+        verificationCode,
+        verificationToken,
+        verificationUrl: `/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}&code=${verificationCode}`
+      });
+    }
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 3. Login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    let user = null;
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query('SELECT * FROM users WHERE email = ?', [cleanEmail]);
+      if (rows.length > 0) user = rows[0];
+    } else {
+      user = mockDb.users.find(u => u.email === cleanEmail);
+    }
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const isVerified = Boolean(user.is_verified);
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, full_name: user.full_name, is_verified: isVerified },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        full_name: user.full_name,
+        email: user.email,
+        role: user.role,
+        is_verified: isVerified
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 4. Verify Email (by token or 6-digit code)
+app.post('/api/auth/verify-email', async (req, res) => {
+  try {
+    const { token, email, code } = req.body;
+
+    let user = null;
+
+    if (token) {
+      // Verify via token
+      if (!useMockDb && dbPool) {
+        const [rows] = await dbPool.query('SELECT * FROM users WHERE verification_token = ?', [token]);
+        if (rows.length > 0) user = rows[0];
+      } else {
+        user = mockDb.users.find(u => u.verification_token === token);
+      }
+    } else if (email && code) {
+      // Verify via email + 6-digit code
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanCode = code.trim();
+
+      if (!useMockDb && dbPool) {
+        const [rows] = await dbPool.query('SELECT * FROM users WHERE email = ? AND verification_code = ?', [cleanEmail, cleanCode]);
+        if (rows.length > 0) user = rows[0];
+      } else {
+        user = mockDb.users.find(u => u.email === cleanEmail && u.verification_code === cleanCode);
+      }
+    } else {
+      return res.status(400).json({ error: 'Verification token or email with code is required' });
+    }
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired verification code/link' });
+    }
+
+    // Mark verified
+    if (!useMockDb && dbPool) {
+      await dbPool.query(
+        'UPDATE users SET is_verified = 1, verification_token = NULL, verification_code = NULL WHERE id = ?',
+        [user.id]
+      );
+    } else {
+      user.is_verified = true;
+      user.verification_token = null;
+      user.verification_code = null;
+    }
+
+    console.log(`✅ [Email Verified Successfully] User ID: ${user.id}, Email: ${user.email}`);
+
+    res.json({
+      success: true,
+      message: 'Your email address has been verified successfully!'
+    });
+  } catch (error) {
+    console.error('Verify email error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 5. Resend Verification Email
+app.post('/api/auth/resend-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    let user = null;
+
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query('SELECT * FROM users WHERE email = ?', [cleanEmail]);
+      if (rows.length > 0) user = rows[0];
+    } else {
+      user = mockDb.users.find(u => u.email === cleanEmail);
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: 'No account found with that email' });
+    }
+
+    if (user.is_verified) {
+      return res.status(400).json({ error: 'This email is already verified' });
+    }
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+    if (!useMockDb && dbPool) {
+      await dbPool.query(
+        'UPDATE users SET verification_code = ?, verification_token = ? WHERE id = ?',
+        [verificationCode, verificationToken, user.id]
+      );
+    } else {
+      user.verification_code = verificationCode;
+      user.verification_token = verificationToken;
+    }
+
+    console.log(`\n📧 [Resent Email Verification]`);
+    console.log(`To: ${cleanEmail}`);
+    console.log(`Code: ${verificationCode}`);
+    console.log(`Link: http://localhost:${PORT}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}\n`);
+
+    res.json({
+      success: true,
+      message: 'Verification code resent successfully',
+      code: verificationCode,
+      verificationUrl: `/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}&code=${verificationCode}`
+    });
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 6. Forgot Password — Generate Reset Token
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email address is required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    let user = null;
+
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query('SELECT * FROM users WHERE email = ?', [cleanEmail]);
+      if (rows.length > 0) user = rows[0];
+    } else {
+      user = mockDb.users.find(u => u.email === cleanEmail);
+    }
+
+    if (!user) {
+      return res.status(200).json({
+        message: 'If that email exists in our records, password reset instructions have been generated.',
+        simulated: true
+      });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetExpires = new Date(Date.now() + 3600000); // 1 hour
+
+    if (!useMockDb && dbPool) {
+      await dbPool.query(
+        'UPDATE users SET reset_token = ?, reset_expires = ? WHERE id = ?',
+        [resetToken, resetExpires, user.id]
+      );
+    } else {
+      user.reset_token = resetToken;
+      user.reset_expires = resetExpires;
+    }
+
+    const resetUrl = `/reset-password.html?token=${resetToken}`;
+
+    console.log(`\n🔑 [Password Reset Request]`);
+    console.log(`Email: ${cleanEmail}`);
+    console.log(`Reset URL: http://localhost:${PORT}${resetUrl}\n`);
+
+    res.json({
+      success: true,
+      message: 'Password reset link generated successfully.',
+      resetUrl,
+      resetToken
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 7. Verify Reset Token
+app.post('/api/auth/verify-reset-token', async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ valid: false, error: 'Token is required' });
+    }
+
+    let user = null;
+    const now = new Date();
+
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query(
+        'SELECT id, email, reset_expires FROM users WHERE reset_token = ? AND reset_expires > ?',
+        [token, now]
+      );
+      if (rows.length > 0) user = rows[0];
+    } else {
+      user = mockDb.users.find(u => u.reset_token === token && u.reset_expires && new Date(u.reset_expires) > now);
+    }
+
+    if (!user) {
+      return res.status(400).json({ valid: false, error: 'Invalid or expired password reset link' });
+    }
+
+    res.json({ valid: true, email: user.email });
+  } catch (error) {
+    console.error('Verify reset token error:', error);
+    res.status(500).json({ valid: false, error: 'Internal server error' });
+  }
+});
+
+// 8. Reset Password
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: 'Token and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    let user = null;
+    const now = new Date();
+
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query(
+        'SELECT * FROM users WHERE reset_token = ? AND reset_expires > ?',
+        [token, now]
+      );
+      if (rows.length > 0) user = rows[0];
+    } else {
+      user = mockDb.users.find(u => u.reset_token === token && u.reset_expires && new Date(u.reset_expires) > now);
+    }
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired reset token' });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+
+    if (!useMockDb && dbPool) {
+      await dbPool.query(
+        'UPDATE users SET password_hash = ?, reset_token = NULL, reset_expires = NULL WHERE id = ?',
+        [newHash, user.id]
+      );
+    } else {
+      user.password_hash = newHash;
+      user.reset_token = null;
+      user.reset_expires = null;
+    }
+
+    res.json({
+      success: true,
+      message: 'Your password has been reset successfully! You can now log in.'
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 9. Change Password (Authenticated)
+app.post('/api/auth/change-password', authMiddleware, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters' });
+    }
+
+    let user = null;
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query('SELECT * FROM users WHERE id = ?', [req.user.id]);
+      if (rows.length > 0) user = rows[0];
+    } else {
+      user = mockDb.users.find(u => u.id === req.user.id);
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Current password does not match' });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+
+    if (!useMockDb && dbPool) {
+      await dbPool.query('UPDATE users SET password_hash = ? WHERE id = ?', [newHash, user.id]);
+    } else {
+      user.password_hash = newHash;
+    }
+
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 10. Update Profile (Authenticated)
+app.put('/api/auth/profile', authMiddleware, async (req, res) => {
+  try {
+    const { full_name } = req.body;
+
+    if (!full_name || full_name.trim().length === 0) {
+      return res.status(400).json({ error: 'Full name is required' });
+    }
+
+    const cleanName = full_name.trim();
+
+    if (!useMockDb && dbPool) {
+      await dbPool.query('UPDATE users SET full_name = ? WHERE id = ?', [cleanName, req.user.id]);
+    } else {
+      const user = mockDb.users.find(u => u.id === req.user.id);
+      if (user) user.full_name = cleanName;
+    }
+
+    const newToken = jwt.sign(
+      { id: req.user.id, email: req.user.email, role: req.user.role, full_name: cleanName, is_verified: req.user.is_verified },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      token: newToken,
+      user: {
+        id: req.user.id,
+        full_name: cleanName,
+        email: req.user.email,
+        role: req.user.role,
+        is_verified: req.user.is_verified
+      }
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 11. Get Current User Profile & Progress
+app.get('/api/auth/me', authMiddleware, async (req, res) => {
+  try {
+    let user = null;
+    let progress = [];
+
+    if (!useMockDb && dbPool) {
+      const [users] = await dbPool.query('SELECT id, full_name, email, role, is_verified, created_at FROM users WHERE id = ?', [req.user.id]);
+      if (users.length > 0) user = users[0];
+      const [progRows] = await dbPool.query('SELECT track_id, phase_number, completed FROM user_progress WHERE user_id = ?', [req.user.id]);
+      progress = progRows;
+    } else {
+      const u = mockDb.users.find(x => x.id === req.user.id);
+      if (u) {
+        user = { id: u.id, full_name: u.full_name, email: u.email, role: u.role, is_verified: Boolean(u.is_verified), created_at: u.created_at };
+      }
+      progress = mockDb.user_progress.filter(p => p.user_id === req.user.id);
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ user, progress });
+  } catch (error) {
+    console.error('Me error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 12. Progress Tracking Routes
+app.get('/api/progress/:trackId', authMiddleware, async (req, res) => {
+  try {
+    const { trackId } = req.params;
+    let completedPhases = [];
+
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query(
+        'SELECT phase_number, completed FROM user_progress WHERE user_id = ? AND track_id = ? AND completed = 1',
+        [req.user.id, trackId]
+      );
+      completedPhases = rows.map(r => r.phase_number);
+    } else {
+      completedPhases = mockDb.user_progress
+        .filter(p => p.user_id === req.user.id && p.track_id === trackId && p.completed)
+        .map(p => p.phase_number);
+    }
+
+    res.json({ trackId, completedPhases });
+  } catch (error) {
+    console.error('Get progress error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/progress/toggle', authMiddleware, async (req, res) => {
+  try {
+    const { trackId, phaseNumber, completed } = req.body;
+
+    if (!trackId || phaseNumber === undefined) {
+      return res.status(400).json({ error: 'trackId and phaseNumber are required' });
+    }
+
+    const isCompleted = completed === undefined ? true : Boolean(completed);
+
+    if (!useMockDb && dbPool) {
+      await dbPool.query(`
+        INSERT INTO user_progress (user_id, track_id, phase_number, completed)
+        VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE completed = VALUES(completed);
+      `, [req.user.id, trackId, phaseNumber, isCompleted ? 1 : 0]);
+    } else {
+      const existingIdx = mockDb.user_progress.findIndex(
+        p => p.user_id === req.user.id && p.track_id === trackId && p.phase_number === phaseNumber
+      );
+      if (existingIdx >= 0) {
+        mockDb.user_progress[existingIdx].completed = isCompleted;
+      } else {
+        mockDb.user_progress.push({
+          user_id: req.user.id,
+          track_id: trackId,
+          phase_number: phaseNumber,
+          completed: isCompleted
+        });
+      }
+    }
+
+    res.json({ message: 'Progress updated', trackId, phaseNumber, completed: isCompleted });
+  } catch (error) {
+    console.error('Toggle progress error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 13. Contact Form API
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Name, email, and message are required' });
+    }
+
+    const cleanSubject = subject ? subject.trim() : 'General Inquiry';
+
+    if (!useMockDb && dbPool) {
+      await dbPool.query(
+        'INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)',
+        [name.trim(), email.trim(), cleanSubject, message.trim()]
+      );
+    } else {
+      mockDb.contact_messages.push({
+        id: mockDb.contact_messages.length + 1,
+        name: name.trim(),
+        email: email.trim(),
+        subject: cleanSubject,
+        message: message.trim(),
+        is_read: false,
+        created_at: new Date()
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Your message has been received! We will get back to you shortly.'
+    });
+  } catch (error) {
+    console.error('Contact error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 14. Admin Dashboard Routes
+app.get('/api/admin/stats', [authMiddleware, adminMiddleware], async (req, res) => {
+  try {
+    let userCount = 0;
+    let messageCount = 0;
+    let progressCount = 0;
+
+    if (!useMockDb && dbPool) {
+      const [[users]] = await dbPool.query('SELECT COUNT(*) as count FROM users');
+      const [[messages]] = await dbPool.query('SELECT COUNT(*) as count FROM contact_messages');
+      const [[progress]] = await dbPool.query('SELECT COUNT(*) as count FROM user_progress WHERE completed = 1');
+      userCount = users.count;
+      messageCount = messages.count;
+      progressCount = progress.count;
+    } else {
+      userCount = mockDb.users.length;
+      messageCount = mockDb.contact_messages.length;
+      progressCount = mockDb.user_progress.filter(p => p.completed).length;
+    }
+
+    res.json({
+      userCount,
+      messageCount,
+      progressCount,
+      tracksCount: 12,
+      database: useMockDb ? 'mock' : 'mysql'
+    });
+  } catch (error) {
+    console.error('Admin stats error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/admin/users', [authMiddleware, adminMiddleware], async (req, res) => {
+  try {
+    let users = [];
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query('SELECT id, full_name, email, role, is_verified, created_at FROM users ORDER BY id DESC');
+      users = rows;
+    } else {
+      users = mockDb.users.map(u => ({
+        id: u.id,
+        full_name: u.full_name,
+        email: u.email,
+        role: u.role,
+        is_verified: Boolean(u.is_verified),
+        created_at: u.created_at
+      }));
+    }
+    res.json({ users });
+  } catch (error) {
+    console.error('Admin users error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/admin/messages', [authMiddleware, adminMiddleware], async (req, res) => {
+  try {
+    let messages = [];
+    if (!useMockDb && dbPool) {
+      const [rows] = await dbPool.query('SELECT * FROM contact_messages ORDER BY id DESC');
+      messages = rows;
+    } else {
+      messages = [...mockDb.contact_messages].reverse();
+    }
+    res.json({ messages });
+  } catch (error) {
+    console.error('Admin messages error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Fallback for SPA routing or HTML views
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'API route not found' });
+  }
+  next();
+});
+
+// Start Server
+app.listen(PORT, async () => {
+  console.log(`\n==================================================`);
+  console.log(`🚀 DEVPATH Server running at http://localhost:${PORT}`);
+  console.log(`==================================================`);
+  await initDatabase();
+});

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Machine Learning Engineering (MLOps) Roadmap — DEVPATH</title>
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/roadmap.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="page-enter" data-track="mle">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">
+        <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+      </a>
+      <div class="nav-menu" id="navMenu">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./index.html#tracks" class="nav-link">Tracks</a>
+        <a href="./contactus.html" class="nav-link">Contact</a>
+        <a href="./SignUp_LogIn_Form.html" class="nav-link nav-btn">Sign In</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="roadmap-hero reveal">
+      <div class="hero-container">
+        <a href="./mle.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to ML Engineering</a>
+        <h1>Machine Learning Engineering (MLOps) Roadmap</h1>
+        <p>Learn to build reproducible ML pipelines, containerize models, manage feature stores, and deploy auto-scaling inference endpoints on Kubernetes.</p>
+        <div class="roadmap-stats">
+          <span><i class="fa-solid fa-layer-group"></i> 9 Phases</span>
+          <span><i class="fa-regular fa-clock"></i> 7-10 Months</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="timeline-container">
+      <div class="timeline">
+        <!-- Phase 1 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">1</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-brands fa-python"></i>
+              </div>
+              <div>
+                <h3>Phase 1: Production Python & Software Engineering</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Write robust, modular, test-driven Python code rather than messy Jupyter notebooks.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Object-Oriented Design</span>
+              <span class="skill-tag">Type Hinting & Pydantic</span>
+              <span class="skill-tag">Pytest Testing Framework</span>
+              <span class="skill-tag">Modular Packaging</span>
+              <span class="skill-tag">Git for Data Science</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Python Programming in Arabic</div>
+                    <div class="resource-platform">Elzero Web School</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=XcgH9LpHBmw" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Python for Data Science Course</div>
+                    <div class="resource-platform">freeCodeCamp</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">2</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-gears"></i>
+              </div>
+              <div>
+                <h3>Phase 2: Feature Engineering Pipelines</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Build reproducible data transformations, categorical encoding, and automated feature selection pipelines.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Scikit-Learn Pipelines</span>
+              <span class="skill-tag">Data Imputation & Scaling</span>
+              <span class="skill-tag">One-Hot & Target Encoding</span>
+              <span class="skill-tag">Dask for Large Datasets</span>
+              <span class="skill-tag">ColumnTransformers</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://scikit-learn.org/stable/modules/compose.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Scikit-Learn Pipeline Docs</div>
+                    <div class="resource-platform">Scikit-Learn</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">3</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+              <div>
+                <h3>Phase 3: Experiment Tracking & Model Registry</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Version-control training runs, parameters, metrics, model artifacts, and datasets with MLflow and DVC.</p>
+            <div class="skills-list">
+              <span class="skill-tag">MLflow Tracking</span>
+              <span class="skill-tag">Model Registry & Staging</span>
+              <span class="skill-tag">DVC (Data Version Control)</span>
+              <span class="skill-tag">Weights & Biases (W&B)</span>
+              <span class="skill-tag">Reproducibility</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://mlflow.org/docs/latest/index.html" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">MLflow Documentation</div>
+                    <div class="resource-platform">MLflow.org</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+                <a href="https://dvc.org/doc" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">DVC Getting Started</div>
+                    <div class="resource-platform">DVC.org</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">4</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-brands fa-docker"></i>
+              </div>
+              <div>
+                <h3>Phase 4: Containerizing Machine Learning Models</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Package complex ML dependencies, CUDA drivers, and model weights into reproducible Docker containers.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Docker for Data Science</span>
+              <span class="skill-tag">Multi-Stage Docker Builds</span>
+              <span class="skill-tag">Conda Environments in Docker</span>
+              <span class="skill-tag">Base Image Optimization</span>
+              <span class="skill-tag">GPU Pass-through</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://docs.docker.com/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Docker Documentation</div>
+                    <div class="resource-platform">Docker</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">5</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <h3>Phase 5: High-Performance Model Serving & APIs</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Expose machine learning models as high-throughput, asynchronous REST APIs with FastAPI.</p>
+            <div class="skills-list">
+              <span class="skill-tag">FastAPI Async Endpoints</span>
+              <span class="skill-tag">Request Validation (Pydantic)</span>
+              <span class="skill-tag">Batch Prediction Endpoints</span>
+              <span class="skill-tag">TorchServe / TF Serving</span>
+              <span class="skill-tag">Inference Latency Tuning</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.youtube.com/watch?v=0sOvCWFmrtA" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-brands fa-youtube"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">FastAPI Crash Course</div>
+                    <div class="resource-platform">freeCodeCamp</div>
+                  </div>
+                  <span class="resource-badge">Watch</span>
+                </a>
+                <a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">FastAPI Official Documentation</div>
+                    <div class="resource-platform">FastAPI</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 6 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">6</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-utensils"></i>
+              </div>
+              <div>
+                <h3>Phase 6: Feature Stores & Data Management</h3>
+                <span class="phase-duration">3 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Manage online low-latency and offline batch features across training and real-time serving with Feast.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Feature Store Architecture</span>
+              <span class="skill-tag">Feast Framework</span>
+              <span class="skill-tag">Online vs Offline Feature Sync</span>
+              <span class="skill-tag">Data Leakage Prevention</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://docs.feast.dev/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Feast Feature Store Docs</div>
+                    <div class="resource-platform">Feast.dev</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 7 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">7</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-wind"></i>
+              </div>
+              <div>
+                <h3>Phase 7: ML Pipeline Orchestration</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Automate continuous retraining, data extraction, validation, and deployment DAGs with Apache Airflow and Kubeflow.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Apache Airflow DAGs</span>
+              <span class="skill-tag">Kubeflow Pipelines</span>
+              <span class="skill-tag">Data Validation (Great Expectations)</span>
+              <span class="skill-tag">Automated Retraining Triggers</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://www.kubeflow.org/docs/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Kubeflow Documentation</div>
+                    <div class="resource-platform">Kubeflow.org</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 8 -->
+        <div class="timeline-phase reveal-right">
+          <div class="phase-number">8</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-dharmachakra"></i>
+              </div>
+              <div>
+                <h3>Phase 8: Kubernetes for Machine Learning</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Deploy auto-scaling model inference services on Kubernetes clusters with resource quotas and rolling updates.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Kubernetes Deployments for ML</span>
+              <span class="skill-tag">Horizontal Pod Autoscaler (HPA)</span>
+              <span class="skill-tag">Resource Quotas (CPU/GPU)</span>
+              <span class="skill-tag">KNative Serverless</span>
+              <span class="skill-tag">Helm Charts</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://kubernetes.io/docs/home/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Kubernetes Official Manual</div>
+                    <div class="resource-platform">Kubernetes.io</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 9 -->
+        <div class="timeline-phase reveal-left">
+          <div class="phase-number">9</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-icon" style="background-color: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <div>
+                <h3>Phase 9: Monitoring, Drift Detection & A/B Testing</h3>
+                <span class="phase-duration">4 Weeks</span>
+              </div>
+            </div>
+            <p class="phase-description">Detect data and concept drift, track model degradation in production, and run shadow and canary rollouts.</p>
+            <div class="skills-list">
+              <span class="skill-tag">Data Drift Detection with EvidentlyAI</span>
+              <span class="skill-tag">Concept Drift & Retraining</span>
+              <span class="skill-tag">Prometheus ML Metrics</span>
+              <span class="skill-tag">Canary & Shadow Deployments</span>
+              <span class="skill-tag">A/B Model Testing</span>
+            </div>
+            <div class="phase-resources">
+              <h4>Curated Resources</h4>
+              <div class="resources-list">
+                <a href="https://docs.evidentlyai.com/" target="_blank" rel="noopener noreferrer" class="resource-link">
+                  <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
+                  <div class="resource-info">
+                    <div class="resource-title">Evidently AI Documentation</div>
+                    <div class="resource-platform">EvidentlyAI</div>
+                  </div>
+                  <span class="resource-badge">Read</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Completion Banner -->
+    <section class="completion-banner reveal">
+      <div class="completion-inner">
+        <div class="completion-icon"><i class="fa-solid fa-trophy"></i></div>
+        <h2>Congratulations on Completing the Track!</h2>
+        <p>You have mastered the foundational and advanced competencies in this engineering domain. Build a portfolio capstone and prepare for technical interviews.</p>
+        <div class="completion-actions">
+          <a href="./index.html#tracks" class="btn btn-primary"><i class="fa-solid fa-compass"></i> Explore Another Track</a>
+          <a href="./contactus.html" class="btn btn-outline"><i class="fa-solid fa-paper-plane"></i> Share Feedback</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="./index.html" class="nav-logo">
+          <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+        </a>
+        <p>Your path to developing yourself</p>
+        <div class="footer-social">
+          <a href="https://github.com/mohamed-zizo-sketch" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/mohamed--zizo--" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Top Tracks</h4>
+        <a href="./test.html">AI Engineering</a>
+        <a href="./fullstack.html">Full-Stack Dev</a>
+        <a href="./mobile.html">Mobile Development</a>
+        <a href="./devops.html">Cloud & DevOps</a>
+        <a href="./cs.html">Cyber Security</a>
+        <a href="./dt.html">Data Analysis</a>
+      </div>
+      <div class="footer-column">
+        <h4>More Tracks</h4>
+        <a href="./gamedev.html">Game Development</a>
+        <a href="./embedded.html">Embedded & IoT</a>
+        <a href="./blockchain.html">Blockchain & Web3</a>
+        <a href="./mle.html">Machine Learning Ops</a>
+        <a href="./qa.html">Software Testing (QA)</a>
+        <a href="./ui.html">UI/UX Design</a>
+      </div>
+      <div class="footer-column">
+        <h4>Links</h4>
+        <a href="./index.html">Home</a>
+        <a href="./contactus.html">Contact Us</a>
+        <a href="./SignUp_LogIn_Form.html">Sign In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 DEVPATH. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="./js/auth.js"></script>
+  <script src="./js/progress.js"></script>
+  <script src="./main_page.js"></script>
+</body>
+</html>

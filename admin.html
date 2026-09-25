@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEVPATH — Admin Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <style>
+    .admin-hero {
+      padding: 130px 0 var(--space-2xl);
+    }
+
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-3xl);
+    }
+
+    .admin-stat-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-xl);
+    }
+
+    .stat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .admin-section {
+      margin-bottom: var(--space-4xl);
+    }
+
+    .admin-table-container {
+      overflow-x: auto;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(16px);
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .admin-table th {
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
+      font-weight: 600;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .admin-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .admin-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .role-admin { background: rgba(251, 191, 36, 0.2); color: var(--accent-yellow); }
+    .role-user { background: rgba(0, 229, 255, 0.2); color: var(--accent-cyan); }
+
+    .message-card {
+      margin-bottom: var(--space-md);
+      padding: var(--space-xl);
+    }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .message-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body class="page-enter">
+
+  <!-- Navbar -->
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <a href="./index.html" class="nav-logo">
+        <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+      </a>
+      <div class="nav-menu" id="navMenu">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./index.html#tracks" class="nav-link">Tracks</a>
+        <a href="./contactus.html" class="nav-link">Contact</a>
+        <a href="./admin.html" class="nav-link active" style="color: var(--accent-yellow); font-weight: bold;"><i class="fa-solid fa-crown"></i> Admin</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="admin-hero">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-xl);">
+        <div>
+          <h1>Platform <span class="gradient-text">Administration</span></h1>
+          <p>Real-time analytics, user database management, and incoming inquiries.</p>
+        </div>
+        <div>
+          <button class="btn btn-sm btn-outline" onclick="loadDashboard()"><i class="fa-solid fa-rotate"></i> Refresh Data</button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="admin-stats-grid">
+        <div class="glass-card admin-stat-card">
+          <div class="stat-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-cyan);" id="statUsers">--</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Registered Users</div>
+          </div>
+        </div>
+
+        <div class="glass-card admin-stat-card">
+          <div class="stat-icon" style="background: var(--accent-yellow-dim); color: var(--accent-yellow);">
+            <i class="fa-solid fa-inbox"></i>
+          </div>
+          <div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-yellow);" id="statMessages">--</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Inquiries Received</div>
+          </div>
+        </div>
+
+        <div class="glass-card admin-stat-card">
+          <div class="stat-icon" style="background: rgba(52, 211, 153, 0.15); color: #34d399;">
+            <i class="fa-solid fa-check-double"></i>
+          </div>
+          <div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: #34d399;" id="statProgress">--</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Phases Completed</div>
+          </div>
+        </div>
+
+        <div class="glass-card admin-stat-card">
+          <div class="stat-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-purple);" id="statTracks">12</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Active Tracks</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Section -->
+      <div class="admin-section">
+        <h2 style="margin-bottom: var(--space-lg);"><i class="fa-solid fa-user-shield" style="color: var(--accent-cyan);"></i> Registered Users</h2>
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined Date</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading registered users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Messages Section -->
+      <div class="admin-section">
+        <h2 style="margin-bottom: var(--space-lg);"><i class="fa-solid fa-envelope-open-text" style="color: var(--accent-yellow);"></i> Inbound Contact Messages</h2>
+        <div id="messagesContainer">
+          <p style="color: var(--text-muted);">Loading contact messages...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="./index.html" class="nav-logo">
+          <span class="logo-dev">DEV</span><span class="logo-path">PATH</span>
+        </a>
+        <p>Your path to developing yourself</p>
+        <div class="footer-social">
+          <a href="https://github.com/mohamed-zizo-sketch" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/mohamed--zizo--" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Tracks</h4>
+        <a href="./test.html">AI Engineering</a>
+        <a href="./fullstack.html">Full-Stack Dev</a>
+        <a href="./ui.html">UI/UX Design</a>
+        <a href="./cs.html">Cyber Security</a>
+        <a href="./dt.html">Data Analysis</a>
+      </div>
+      <div class="footer-column">
+        <h4>Links</h4>
+        <a href="./index.html">Home</a>
+        <a href="./contactus.html">Contact Us</a>
+        <a href="./SignUp_LogIn_Form.html">Sign In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 DEVPATH. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="./js/auth.js"></script>
+  <script>
+    // Access control: Ensure user is admin
+    const user = Auth.getUser();
+    const token = Auth.getToken();
+
+    if (!user || user.role !== 'admin' || !token) {
+      alert('Access Restricted: You must be logged in as an administrator.');
+      window.location.href = './SignUp_LogIn_Form.html';
+    }
+
+    async function loadDashboard() {
+      const headers = { 'Authorization': `Bearer ${token}` };
+
+      // 1. Fetch Stats
+      try {
+        const statsRes = await fetch('/api/admin/stats', { headers });
+        if (statsRes.ok) {
+          const stats = await statsRes.json();
+          document.getElementById('statUsers').textContent = stats.userCount;
+          document.getElementById('statMessages').textContent = stats.messageCount;
+          document.getElementById('statProgress').textContent = stats.progressCount;
+          document.getElementById('statTracks').textContent = stats.tracksCount || 12;
+        }
+      } catch (e) {
+        console.error('Stats error:', e);
+      }
+
+      // 2. Fetch Users
+      try {
+        const usersRes = await fetch('/api/admin/users', { headers });
+        if (usersRes.ok) {
+          const { users } = await usersRes.json();
+          const tbody = document.getElementById('usersTableBody');
+          if (users.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No users found.</td></tr>`;
+          } else {
+            tbody.innerHTML = users.map(u => `
+              <tr>
+                <td>#${u.id}</td>
+                <td><strong>${u.full_name}</strong></td>
+                <td>${u.email}</td>
+                <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : 'role-user'}">${u.role.toUpperCase()}</span></td>
+                <td>${new Date(u.created_at).toLocaleDateString()}</td>
+              </tr>
+            `).join('');
+          }
+        }
+      } catch (e) {
+        console.error('Users error:', e);
+      }
+
+      // 3. Fetch Messages
+      try {
+        const msgRes = await fetch('/api/admin/messages', { headers });
+        if (msgRes.ok) {
+          const { messages } = await msgRes.json();
+          const container = document.getElementById('messagesContainer');
+          if (messages.length === 0) {
+            container.innerHTML = `<p style="color: var(--text-muted);">No inquiries received yet.</p>`;
+          } else {
+            container.innerHTML = messages.map(m => `
+              <div class="glass-card message-card">
+                <div class="message-header">
+                  <div>
+                    <strong style="color: var(--accent-cyan); font-size: 1.05rem;">${m.subject || 'General Inquiry'}</strong>
+                    <div class="message-meta">From: <strong>${m.name}</strong> (${m.email}) &bull; ${new Date(m.created_at).toLocaleString()}</div>
+                  </div>
+                  <div>
+                    <a href="mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject || 'DEVPATH Inquiry')}" class="btn btn-sm btn-primary">
+                      <i class="fa-solid fa-reply"></i> Reply
+                    </a>
+                  </div>
+                </div>
+                <p style="margin-top: 10px; color: var(--text-secondary); background: rgba(0,0,0,0.2); padding: 12px; border-radius: var(--radius-sm);">${m.message}</p>
+              </div>
+            `).join('');
+          }
+        }
+      } catch (e) {
+        console.error('Messages error:', e);
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
