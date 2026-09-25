@@ -176,6 +176,16 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+app.get('/api/debug-files', (req, res) => {
+  const fs = require('fs');
+  res.json({
+    cwd: process.cwd(),
+    dirname: __dirname,
+    filesInCwd: fs.existsSync(process.cwd()) ? fs.readdirSync(process.cwd()) : [],
+    filesInDirname: fs.existsSync(__dirname) ? fs.readdirSync(__dirname) : []
+  });
+});
+
 // 2. Register (with email verification code & token generation)
 app.post('/api/auth/register', async (req, res) => {
   try {
