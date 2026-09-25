@@ -191,6 +191,29 @@ function adminMiddleware(req, res, next) {
   next();
 }
 
+// Favicon Routes
+app.get(['/favicon.ico', '/favicon.svg'], (req, res) => {
+  const svgPath = path.join(__dirname, 'images', 'favicon.svg');
+  const icoPath = path.join(__dirname, 'favicon.ico');
+  if (fs.existsSync(svgPath)) {
+    res.setHeader('Content-Type', 'image/svg+xml');
+    return res.sendFile(svgPath);
+  }
+  if (fs.existsSync(icoPath)) {
+    return res.sendFile(icoPath);
+  }
+  res.status(204).end();
+});
+
+app.get('/images/favicon.svg', (req, res) => {
+  const svgPath = path.join(__dirname, 'images', 'favicon.svg');
+  if (fs.existsSync(svgPath)) {
+    res.setHeader('Content-Type', 'image/svg+xml');
+    return res.sendFile(svgPath);
+  }
+  res.status(404).end();
+});
+
 // ----------------- API ROUTES ----------------- //
 
 // 1. Health check & DB Status
