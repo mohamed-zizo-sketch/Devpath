@@ -556,7 +556,18 @@
           }
         }, 1200);
       } catch (err) {
-        registerError.textContent = err.message;
+        if (err.message && err.message.toLowerCase().includes('already registered')) {
+          registerError.innerHTML = err.message + ' — <a id="alreadyRegSignIn" style="color:var(--accent-yellow);text-decoration:underline;cursor:pointer;font-weight:600;">Sign In instead</a>';
+          setTimeout(() => {
+            document.getElementById('alreadyRegSignIn')?.addEventListener('click', () => {
+              authForms.className = 'auth-forms';
+              document.getElementById('loginEmail').value = email;
+              document.getElementById('loginPassword').focus();
+            });
+          }, 50);
+        } else {
+          registerError.textContent = err.message;
+        }
         registerError.style.display = 'block';
         regSubmitBtn.disabled = false;
         regSubmitBtn.innerHTML = 'Create Account';
