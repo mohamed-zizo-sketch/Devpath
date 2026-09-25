@@ -322,7 +322,8 @@ app.get('/images/favicon.svg', (req, res) => {
 app.get('/api/status', (req, res) => {
   res.json({
     status: 'online',
-    database: useMockDb ? 'in-memory-fallback' : 'mysql',
+    database: useMockDb ? 'in-memory-fallback' : dbType,
+    dbType,
     timestamp: new Date().toISOString()
   });
 });
