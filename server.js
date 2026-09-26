@@ -1018,7 +1018,7 @@ app.get('/api/admin/stats', [authMiddleware, adminMiddleware], async (req, res) 
       messageCount,
       progressCount,
       tracksCount: 12,
-      database: useMockDb ? 'mock' : 'mysql'
+      database: useMockDb ? 'mock' : dbType
     });
   } catch (error) {
     console.error('Admin stats error:', error);
