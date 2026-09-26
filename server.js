@@ -24,6 +24,7 @@ let dbType = 'mock'; // 'postgres', 'mysql', or 'mock'
 let pgPool = null;
 let mysqlPool = null;
 let useMockDb = true;
+let lastDbError = null;
 
 // Unified database query adapter (works seamlessly on PostgreSQL, MySQL, and Mock)
 const dbPool = {
@@ -189,6 +190,7 @@ async function initDatabase() {
       console.log('✅ Connected to PostgreSQL Database successfully!');
       return;
     } catch (pgErr) {
+      lastDbError = pgErr.message;
       console.warn('⚠️ PostgreSQL connection failed:', pgErr.message);
     }
   }
@@ -352,6 +354,8 @@ app.get('/api/status', (req, res) => {
     status: 'online',
     database: useMockDb ? 'in-memory-fallback' : dbType,
     dbType,
+    dbError: lastDbError,
+    configuredKeys: Object.keys(process.env).filter(k => k.includes('POSTGRES') || k.includes('DATABASE') || k.includes('STORAGE') || k.includes('PG')),
     timestamp: new Date().toISOString()
   });
 });
