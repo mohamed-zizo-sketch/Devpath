@@ -15,3 +15,7 @@ yarn-error.log*
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Dev / mock files
+devpath_mock_db.json
+scratch/

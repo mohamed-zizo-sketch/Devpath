@@ -29,13 +29,16 @@ let useMockDb = true;
 const dbPool = {
   async query(sql, params = []) {
     if (dbType === 'postgres' && pgPool) {
-      let pgSql = sql;
+      let pgSql = sql.trim().replace(/;+$/, '');
       if (pgSql.includes('ON DUPLICATE KEY UPDATE completed = VALUES(completed)')) {
         pgSql = pgSql.replace(
           'ON DUPLICATE KEY UPDATE completed = VALUES(completed)',
           'ON CONFLICT (user_id, track_id, phase_number) DO UPDATE SET completed = EXCLUDED.completed'
         );
       }
+      pgSql = pgSql.replace(/\bcompleted\s*=\s*1\b/gi, 'completed = true');
+      pgSql = pgSql.replace(/\bis_verified\s*=\s*1\b/gi, 'is_verified = true');
+
       const isInsert = pgSql.trim().toUpperCase().startsWith('INSERT');
       if (isInsert && !pgSql.toUpperCase().includes('RETURNING')) {
         pgSql += ' RETURNING id';
@@ -43,7 +46,12 @@ const dbPool = {
       let paramIdx = 1;
       pgSql = pgSql.replace(/\?/g, () => `$${paramIdx++}`);
 
-      const result = await pgPool.query(pgSql, params);
+      // Auto-cast integer booleans to true/false for PostgreSQL boolean columns
+      const pgParams = params.map(p => {
+        return p;
+      });
+
+      const result = await pgPool.query(pgSql, pgParams);
       const rows = result.rows || [];
       if (isInsert) {
         rows.insertId = rows.length > 0 && rows[0].id ? rows[0].id : null;
@@ -369,7 +377,7 @@ app.post('/api/auth/register', async (req, res) => {
 
       const [result] = await dbPool.query(
         'INSERT INTO users (full_name, email, password_hash, role, is_verified, verification_token, verification_code) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [full_name.trim(), cleanEmail, passwordHash, role, isVerified ? 1 : 0, verificationToken, verificationCode]
+        [full_name.trim(), cleanEmail, passwordHash, role, Boolean(isVerified), verificationToken, verificationCode]
       );
 
       const userId = result.insertId;
@@ -522,7 +530,7 @@ app.post('/api/auth/verify-email', async (req, res) => {
     // Mark verified
     if (!useMockDb && dbPool) {
       await dbPool.query(
-        'UPDATE users SET is_verified = 1, verification_token = NULL, verification_code = NULL WHERE id = ?',
+        'UPDATE users SET is_verified = TRUE, verification_token = NULL, verification_code = NULL WHERE id = ?',
         [user.id]
       );
     } else {
@@ -867,7 +875,7 @@ app.get('/api/progress/:trackId', authMiddleware, async (req, res) => {
 
     if (!useMockDb && dbPool) {
       const [rows] = await dbPool.query(
-        'SELECT phase_number, completed FROM user_progress WHERE user_id = ? AND track_id = ? AND completed = 1',
+        'SELECT phase_number, completed FROM user_progress WHERE user_id = ? AND track_id = ? AND (completed = TRUE OR completed = 1)',
         [req.user.id, trackId]
       );
       completedPhases = rows.map(r => r.phase_number);
@@ -898,8 +906,8 @@ app.post('/api/progress/toggle', authMiddleware, async (req, res) => {
       await dbPool.query(`
         INSERT INTO user_progress (user_id, track_id, phase_number, completed)
         VALUES (?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE completed = VALUES(completed);
-      `, [req.user.id, trackId, phaseNumber, isCompleted ? 1 : 0]);
+        ON DUPLICATE KEY UPDATE completed = VALUES(completed)
+      `, [req.user.id, trackId, phaseNumber, Boolean(isCompleted)]);
     } else {
       const existingIdx = mockDb.user_progress.findIndex(
         p => p.user_id === req.user.id && p.track_id === trackId && p.phase_number === phaseNumber
@@ -971,7 +979,7 @@ app.get('/api/admin/stats', [authMiddleware, adminMiddleware], async (req, res) 
     if (!useMockDb && dbPool) {
       const [[users]] = await dbPool.query('SELECT COUNT(*) as count FROM users');
       const [[messages]] = await dbPool.query('SELECT COUNT(*) as count FROM contact_messages');
-      const [[progress]] = await dbPool.query('SELECT COUNT(*) as count FROM user_progress WHERE completed = 1');
+      const [[progress]] = await dbPool.query('SELECT COUNT(*) as count FROM user_progress WHERE completed = TRUE OR completed = 1');
       userCount = users.count;
       messageCount = messages.count;
       progressCount = progress.count;
