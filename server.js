@@ -277,6 +277,26 @@ async function initDatabase() {
   console.log('ℹ️ Running in persistent file/mock storage mode.');
 }
 
+let dbInitPromise = null;
+function ensureDatabase() {
+  if (!dbInitPromise) {
+    dbInitPromise = initDatabase().catch(err => {
+      console.error('Database connection error in ensureDatabase:', err);
+      dbInitPromise = null;
+    });
+  }
+  return dbInitPromise;
+}
+
+app.use(async (req, res, next) => {
+  if (req.url.startsWith('/api') || req.path.startsWith('/api')) {
+    await ensureDatabase();
+  }
+  next();
+});
+
+app.ensureDatabase = ensureDatabase;
+
 // Authentication Middlewares
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -1055,10 +1075,10 @@ if (!process.env.VERCEL) {
     console.log(`\n==================================================`);
     console.log(`🚀 DEVPATH Server running at http://localhost:${PORT}`);
     console.log(`==================================================`);
-    await initDatabase();
+    await ensureDatabase();
   });
 } else {
-  initDatabase().catch(console.error);
+  ensureDatabase().catch(console.error);
 }
 
 module.exports = app;
