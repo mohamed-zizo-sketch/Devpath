@@ -7,11 +7,49 @@ const jwt = require('jsonwebtoken');
 const mysql = require('mysql2/promise');
 const { Pool: PgPool } = require('pg');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'devpath_secret_jwt_key_2026_super_secure';
+const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
+
+// ----------------- EMAIL SETUP ----------------- //
+// Uses Gmail + an App Password (see .env.example). If EMAIL_USER/EMAIL_PASS
+// are not set, emails are skipped and logged to the console instead so local
+// dev without email creds still works.
+const emailConfigured = Boolean(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+const transporter = emailConfigured
+  ? nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+    })
+  : null;
+
+async function sendEmail(to, subject, html) {
+  if (!emailConfigured) {
+    console.log(`\n📧 [Email NOT SENT — EMAIL_USER/EMAIL_PASS not set] To: ${to} | Subject: ${subject}`);
+    console.log(html.replace(/<[^>]+>/g, ' ').trim(), '\n');
+    return { sent: false };
+  }
+  try {
+    await transporter.sendMail({ from: `"DEVPATH" <${process.env.EMAIL_USER}>`, to, subject, html });
+    return { sent: true };
+  } catch (err) {
+    console.error('❌ Email send failed:', err.message);
+    return { sent: false, error: err.message };
+  }
+}
+
+function emailTemplate(title, bodyHtml) {
+  return `
+  <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #eee;border-radius:8px;">
+    <h2 style="color:#111;margin-top:0;">${title}</h2>
+    ${bodyHtml}
+    <p style="color:#999;font-size:12px;margin-top:32px;">DEVPATH — Your Path to Developing Yourself</p>
+  </div>`;
+}
 
 // Middleware
 app.use(cors());
@@ -407,18 +445,20 @@ app.post('/api/auth/register', async (req, res) => {
       const userId = result.insertId;
       const token = jwt.sign({ id: userId, email: cleanEmail, role, full_name: full_name.trim(), is_verified: isVerified }, JWT_SECRET, { expiresIn: '7d' });
 
-      console.log(`\n📧 [Email Verification Sent]`);
-      console.log(`To: ${cleanEmail}`);
-      console.log(`Code: ${verificationCode}`);
-      console.log(`Link: http://localhost:${PORT}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}\n`);
+      if (!isAdminEmail) {
+        const verifyLink = `${APP_URL}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}`;
+        await sendEmail(cleanEmail, 'Verify your DEVPATH account', emailTemplate('Welcome to DEVPATH! 🚀', `
+          <p>Click the button below to verify your email:</p>
+          <p><a href="${verifyLink}" style="display:inline-block;background:#6366f1;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">Verify Email</a></p>
+          <p>Or enter this 6-digit code on the verification page:</p>
+          <p style="font-size:24px;letter-spacing:4px;font-weight:bold;">${verificationCode}</p>
+        `));
+      }
 
       return res.status(201).json({
-        message: 'User registered successfully. Please verify your email.',
+        message: 'User registered successfully. Please check your email to verify your account.',
         token,
-        user: { id: userId, full_name: full_name.trim(), email: cleanEmail, role, is_verified: isVerified },
-        verificationCode,
-        verificationToken,
-        verificationUrl: `/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}&code=${verificationCode}`
+        user: { id: userId, full_name: full_name.trim(), email: cleanEmail, role, is_verified: isVerified }
       });
     } else {
       const existing = mockDb.users.find(u => u.email === cleanEmail);
@@ -444,18 +484,20 @@ app.post('/api/auth/register', async (req, res) => {
 
       const token = jwt.sign({ id: newUser.id, email: cleanEmail, role, full_name: full_name.trim(), is_verified: isVerified }, JWT_SECRET, { expiresIn: '7d' });
 
-      console.log(`\n📧 [Email Verification Sent - Mock]`);
-      console.log(`To: ${cleanEmail}`);
-      console.log(`Code: ${verificationCode}`);
-      console.log(`Link: http://localhost:${PORT}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}\n`);
+      if (!isAdminEmail) {
+        const verifyLink = `${APP_URL}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}`;
+        await sendEmail(cleanEmail, 'Verify your DEVPATH account', emailTemplate('Welcome to DEVPATH! 🚀', `
+          <p>Click the button below to verify your email:</p>
+          <p><a href="${verifyLink}" style="display:inline-block;background:#6366f1;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">Verify Email</a></p>
+          <p>Or enter this 6-digit code on the verification page:</p>
+          <p style="font-size:24px;letter-spacing:4px;font-weight:bold;">${verificationCode}</p>
+        `));
+      }
 
       return res.status(201).json({
-        message: 'User registered successfully. Please verify your email.',
+        message: 'User registered successfully. Please check your email to verify your account.',
         token,
-        user: { id: newUser.id, full_name: newUser.full_name, email: cleanEmail, role, is_verified: isVerified },
-        verificationCode,
-        verificationToken,
-        verificationUrl: `/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}&code=${verificationCode}`
+        user: { id: newUser.id, full_name: newUser.full_name, email: cleanEmail, role, is_verified: isVerified }
       });
     }
   } catch (error) {
@@ -615,16 +657,17 @@ app.post('/api/auth/resend-verification', async (req, res) => {
       user.verification_token = verificationToken;
     }
 
-    console.log(`\n📧 [Resent Email Verification]`);
-    console.log(`To: ${cleanEmail}`);
-    console.log(`Code: ${verificationCode}`);
-    console.log(`Link: http://localhost:${PORT}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}\n`);
+    const verifyLink = `${APP_URL}/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}`;
+    await sendEmail(cleanEmail, 'Your new DEVPATH verification code', emailTemplate('Verify your email', `
+      <p>Click the button below to verify your email:</p>
+      <p><a href="${verifyLink}" style="display:inline-block;background:#6366f1;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">Verify Email</a></p>
+      <p>Or enter this 6-digit code on the verification page:</p>
+      <p style="font-size:24px;letter-spacing:4px;font-weight:bold;">${verificationCode}</p>
+    `));
 
     res.json({
       success: true,
-      message: 'Verification code resent successfully',
-      code: verificationCode,
-      verificationUrl: `/verify-email.html?email=${encodeURIComponent(cleanEmail)}&token=${verificationToken}&code=${verificationCode}`
+      message: 'Verification email resent successfully. Please check your inbox.'
     });
   } catch (error) {
     console.error('Resend verification error:', error);
@@ -670,17 +713,17 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       user.reset_expires = resetExpires;
     }
 
-    const resetUrl = `/reset-password.html?token=${resetToken}`;
+    const resetUrl = `${APP_URL}/reset-password.html?token=${resetToken}`;
 
-    console.log(`\n🔑 [Password Reset Request]`);
-    console.log(`Email: ${cleanEmail}`);
-    console.log(`Reset URL: http://localhost:${PORT}${resetUrl}\n`);
+    await sendEmail(cleanEmail, 'Reset your DEVPATH password', emailTemplate('Password Reset Request', `
+      <p>We received a request to reset your password. This link expires in 1 hour.</p>
+      <p><a href="${resetUrl}" style="display:inline-block;background:#6366f1;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">Reset Password</a></p>
+      <p>If you didn't request this, you can safely ignore this email.</p>
+    `));
 
     res.json({
       success: true,
-      message: 'Password reset link generated successfully.',
-      resetUrl,
-      resetToken
+      message: 'If that email exists in our records, a password reset link has been sent.'
     });
   } catch (error) {
     console.error('Forgot password error:', error);
@@ -1061,6 +1104,69 @@ app.get('/api/admin/messages', [authMiddleware, adminMiddleware], async (req, re
     res.json({ messages });
   } catch (error) {
     console.error('Admin messages error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 15. AI Phase Tutor — answers questions scoped to the current roadmap phase
+const aiRateLimit = new Map(); // simple in-memory per-user rate limit: userId -> [timestamps]
+app.post('/api/ai/ask', authMiddleware, async (req, res) => {
+  try {
+    const { trackTitle, phaseTitle, phaseTopics, question } = req.body;
+
+    if (!question || !question.trim()) {
+      return res.status(400).json({ error: 'A question is required' });
+    }
+    if (question.length > 1000) {
+      return res.status(400).json({ error: 'Question is too long (max 1000 characters)' });
+    }
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return res.status(503).json({ error: 'AI tutor is not configured on this server yet' });
+    }
+
+    // Rate limit: 15 questions per user per 10 minutes
+    const now = Date.now();
+    const windowMs = 10 * 60 * 1000;
+    const timestamps = (aiRateLimit.get(req.user.id) || []).filter(t => now - t < windowMs);
+    if (timestamps.length >= 15) {
+      return res.status(429).json({ error: 'You are asking questions too quickly. Please wait a bit and try again.' });
+    }
+    timestamps.push(now);
+    aiRateLimit.set(req.user.id, timestamps);
+
+    const systemPrompt = `You are a friendly, concise tutor embedded in the "${trackTitle || 'DEVPATH'}" learning roadmap, specifically for the phase "${phaseTitle || 'this phase'}", which covers: ${phaseTopics || 'general topics for this track'}.
+Only answer questions relevant to this phase or closely related fundamentals. If asked something unrelated to the track, politely redirect the learner back to the current phase's topics.
+Keep answers practical and under 200 words unless the learner asks for more depth.`;
+
+    const aiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 600,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: question.trim() }]
+      })
+    });
+
+    if (!aiResponse.ok) {
+      const errText = await aiResponse.text();
+      console.error('Anthropic API error:', aiResponse.status, errText);
+      return res.status(502).json({ error: 'AI tutor is temporarily unavailable. Please try again shortly.' });
+    }
+
+    const data = await aiResponse.json();
+    const answer = data.content && data.content[0] && data.content[0].text
+      ? data.content[0].text
+      : "Sorry, I couldn't generate an answer just now.";
+
+    res.json({ answer });
+  } catch (error) {
+    console.error('AI ask error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

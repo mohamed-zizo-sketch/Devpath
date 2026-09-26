@@ -1,0 +1,150 @@
+/* AI Tutor floating widget — matches DEVPATH glassmorphic theme (css/global.css) */
+
+.ai-tutor-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.12));
+  background: linear-gradient(135deg, var(--accent-cyan, #00e5ff), var(--accent-purple, #7c3aed));
+  color: #03032d;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 229, 255, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.ai-tutor-fab:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 229, 255, 0.5);
+}
+
+.ai-tutor-panel {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  z-index: 9999;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  max-height: 480px;
+  display: none;
+  flex-direction: column;
+  background: var(--bg-elevated, #111155);
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.12));
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+.ai-tutor-panel.open { display: flex; }
+
+.ai-tutor-header {
+  padding: 14px 16px;
+  background: var(--bg-card, rgba(255,255,255,0.06));
+  border-bottom: 1px solid var(--glass-border, rgba(255,255,255,0.12));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ai-tutor-header-text { display: flex; flex-direction: column; }
+.ai-tutor-header-text strong { color: var(--text-primary, #fff); font-size: 14px; }
+.ai-tutor-header-text span { color: var(--text-muted, rgba(255,255,255,0.45)); font-size: 11px; }
+.ai-tutor-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary, rgba(255,255,255,0.7));
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+.ai-tutor-close:hover { color: var(--text-primary, #fff); }
+
+.ai-tutor-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 160px;
+}
+.ai-tutor-msg {
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 88%;
+  white-space: pre-wrap;
+}
+.ai-tutor-msg.user {
+  align-self: flex-end;
+  background: var(--accent-cyan-dim, rgba(0,229,255,0.15));
+  color: var(--text-primary, #fff);
+}
+.ai-tutor-msg.ai {
+  align-self: flex-start;
+  background: var(--bg-card, rgba(255,255,255,0.06));
+  color: var(--text-secondary, rgba(255,255,255,0.85));
+}
+.ai-tutor-msg.error {
+  align-self: flex-start;
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--accent-red, #f87171);
+}
+.ai-tutor-msg.loading { color: var(--text-muted, rgba(255,255,255,0.45)); font-style: italic; }
+
+.ai-tutor-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--glass-border, rgba(255,255,255,0.12));
+}
+.ai-tutor-input-row input {
+  flex: 1;
+  background: var(--bg-card, rgba(255,255,255,0.06));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.12));
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--text-primary, #fff);
+  font-size: 13px;
+  outline: none;
+}
+.ai-tutor-input-row input:focus { border-color: var(--accent-cyan, #00e5ff); }
+.ai-tutor-input-row button {
+  background: var(--accent-cyan, #00e5ff);
+  color: #03032d;
+  border: none;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+}
+.ai-tutor-input-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Small "Ask AI" trigger placed inside each phase card header */
+.ai-tutor-ask-phase {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-cyan, #00e5ff);
+  color: var(--accent-cyan, #00e5ff);
+  background: transparent;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ai-tutor-ask-phase:hover { background: var(--accent-cyan-dim, rgba(0,229,255,0.15)); }
+
+@media (max-width: 480px) {
+  .ai-tutor-panel { right: 16px; left: 16px; width: auto; bottom: 84px; }
+  .ai-tutor-fab { right: 16px; bottom: 16px; }
+}
